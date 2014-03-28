@@ -44,12 +44,23 @@ class MyGame extends Game {
       //label.add(new Label("l2"));
       //label.style.position = 'absolute';
       panel2.add(label);
+
+
       //label.width = 50;
       //label.height = 50;
       //label.classes.add('border');
       //    label.width=rand.nextInt(100);
       //    label.height=rand.nextInt(100);
     }
+
+    var mon = Mouse();
+
+    var state = Generation();
+    //state.effect=10;
+    //    state.attach(mon);
+    mon.attachState(state);
+
+    panel2.add(mon);
 
     for (int i = 0;i < 100000;i++) {
       var item = new Weapon();

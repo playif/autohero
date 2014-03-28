@@ -1,8 +1,9 @@
 part of dungeon;
 
 
+class Monster extends StateTarget {
 
-class Monster extends Entity{
+
   String name="monster";
   num HP=10;
   num MHP=10;

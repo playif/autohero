@@ -23,7 +23,7 @@ Upgrade up2() {
 }
 
 
-class Role extends Entity with Updatable {
+class Role extends StateTarget {
   List<Action> actions = [];
 
   List<Item> items = [];

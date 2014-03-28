@@ -87,7 +87,7 @@ class Game extends Entity {
         if (e.parent == null) {
           throw new Exception('No parent!');
         } else {
-          e.parent.remove(this);
+          e.parent.remove(e);
         }
         i--;
         continue;

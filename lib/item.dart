@@ -23,14 +23,14 @@ Item RedPotion() {
 }
 
 
-typedef void Attribute(Role role, num value, int inv);
+typedef void Attribute(Role role, num value);
 
-Attribute DAMAGE = (Role role, num value, int inv) {
-  role.damage += inv * value;
+Attribute DAMAGE = (Role role, num value) {
+  role.damage += value;
 };
 
-Attribute DAMAGE_Modify = (Role role, num value, int inv) {
-  role.damage += inv * value;
+Attribute DAMAGE_Modify = (Role role, num value) {
+  role.damage += value;
 };
 
 Item Dagger() {
@@ -156,18 +156,20 @@ class Weapon extends Item {
 
   int get level => _level;
 
+  Role _role;
+
   set level(int value) {
-    onUnequip(_role);
+    Role role = _role;
+    unequip();
     _level = value;
-    onEquip(_role);
+    equip(role);
   }
 
-  Role _role;
 
   void equip(Role role) {
     _role = role;
     for (var a in fomulas.keys) {
-      a(_role, fomulas[a](), 1);
+      a(_role, fomulas[a]());
     }
     //onEquip(role);
   }
@@ -175,7 +177,7 @@ class Weapon extends Item {
   void unequip() {
     //onEquip(role);
     for (var a in fomulas.keys) {
-      a(_role, fomulas[a](), -1);
+      a(_role, -1 * fomulas[a]());
     }
     _role = null;
   }
