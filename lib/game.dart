@@ -225,7 +225,7 @@ abstract class Game extends GameEntity with RoleHost, SiteHost {
   void _update(Timer timer) {
     _updateEntities(this);
 
-    if (monsters.length <= currentSite.maxMonster + siteLevel * 2) {
+    if (monsters.length <= currentSite.maxMonster + siteLevel * 3) {
       add(createMonster());
     }
   }
