@@ -45,7 +45,7 @@ class Role extends GameEntity with StateHost, ActionHost {
       ..text = "等級:${level}"
       ..classes.add("small-text"));
 
-    add(actionPanel);
+    add(actionPanel); 
   }
 
   @override
