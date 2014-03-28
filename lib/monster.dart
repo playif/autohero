@@ -13,12 +13,12 @@ class Monster extends GameEntity with StateHost, ActionHost {
   }
 
   num MHP = 10;
-
+  num XP = 10;
 
   int level = 1;
 
   Bar HPBar = new Bar();
-
+  Label HPLabel = new Label();
 
   void init() {
     _HP = MHP;
@@ -28,6 +28,9 @@ class Monster extends GameEntity with StateHost, ActionHost {
       ..text = "等級:${level}"
       ..classes.add("small-text"));
 
+    HPLabel.classes.add("small-text");
+    HPLabel.text = "生命:$_HP";
+    add(HPLabel);
 
     add(HPBar);
     HPBar.width = 100;
@@ -78,12 +81,16 @@ class Monster extends GameEntity with StateHost, ActionHost {
   check() {
     if (_HP <= 0) {
       _HP = 0;
+
+      game.obtainExp(XP);
+
       leave();
     }
     if (_HP > MHP) {
       _HP = MHP;
     }
     HPBar.min = _HP;
+    HPLabel.text = "生命:$_HP";
   }
 
   @override

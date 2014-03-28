@@ -25,34 +25,77 @@ Upgrade up2() {
 }
 
 
-class Role extends GameEntity with StateHost, ActionHost {
+class Role extends GameEntity with StateHost, ActionHost, ItemHost {
 
 
-  List<Item> items = [];
+  //  List<Item> items = [];
 
   List<Upgrade> upgrades = [];
 
-  num level = 0;
+  num level = 1;
 
   String name = "role";
-  num damage = 0;
+  num damage = 1;
 
+  num MXP = 20;
+
+  num XP = 0;
+
+  Bar expBar = new Bar();
+  Label levelLabel = new Label();
 
   void init() {
+
     add(new Label()
       ..text = this.name);
-    add(new Label()
+
+    levelLabel = new Label()
       ..text = "等級:${level}"
+      ..classes.add("small-text");
+    add(levelLabel);
+
+    add(new Label()
+      ..text = "傷害:${damage}"
       ..classes.add("small-text"));
 
-    add(actionPanel); 
+    add(actionPanel);
+    add(itemPanel);
+
+
+    add(expBar);
+    expBar.width = 188;
+    expBar.height = 5;
+    expBar.color = 0;
+    expBar.max = MXP;
+    expBar.min = XP;
+
+    width = 190;
+    classes.add('box');
+    classes.add('vbox');
+    classes.add('border');
+    classes.add('small-margin');
   }
 
   @override
   void update() {
-    //    actions.forEach((s) {
-    //      s.update();
-    //    });
+
+
+  }
+
+  void check() {
+
+
+    if (XP >= MXP) {
+      XP = 0;
+      level += 1;
+      levelLabel
+        ..text = "等級:${level}";
+      MXP += level * level * 2;
+    }
+
+    expBar.max = MXP;
+    expBar.min = XP;
+
   }
 
 //  @override
@@ -74,9 +117,11 @@ class Role extends GameEntity with StateHost, ActionHost {
 
 }
 
-Role role1() {
+Role Worrier() {
   Role role = new Role();
-
+  role
+    ..name = "戰士"
+    ..damage = 4;
 
   return role;
 }

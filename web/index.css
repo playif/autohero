@@ -4,7 +4,7 @@ html, body {
     margin: 0px;
     background-color: #100;
     font-family: 'Microsoft JhengHei', 'Open Sans', sans-serif;
-    font-size: 24px;
+    font-size: 42px;
 
     color: #ddd;
     display: -webkit-flex;
@@ -31,7 +31,7 @@ div {
 }
 
 .small-text {
-    font-size: 16px;
+    font-size: 24px;
 
 }
 
@@ -79,6 +79,7 @@ h1, p {
 .btn {
     border: 2px solid #FFFFFF;
     border-radius: 5px;
+    margin: 5px;
 }
 
 .btn:HOVER {

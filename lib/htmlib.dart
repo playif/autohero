@@ -167,6 +167,7 @@ class Bar extends Entity {
     if (_min > max) _min = max;
     if (_min < 0) _min = 0;
     minBar.width = _min / max * width;
+    element.title = "(${_min.ceil()}/$max)";
   }
 
   num color;

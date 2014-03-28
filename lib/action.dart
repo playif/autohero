@@ -7,14 +7,19 @@
 
 part of dungeon;
 
+class Component extends GameEntity {
+  GameEntity host;
+}
+
 class ActionHost {
   List<Action> actions = [];
-  final GameEntity actionPanel = new GameEntity();
+  final Component actionPanel = new Component();
 
   _addAction(Action action) {
-    action.init();
+    action.init(this);
 
     //owner.addChild(action);
+
 
     actionPanel.addChild(action);
   }
@@ -67,7 +72,9 @@ class Action extends Entity with Updatable, TimeWatcher {
 
   }
 
-  init() {
+  init(ActionHost owner) {
+    _owner = owner;
+
     add(timerClock);
 
     timerClock.add(new Label()
@@ -89,7 +96,7 @@ void AttackFirstMonster(Role caster, num value) {
   var monster = game.getFirstMonster();
   if (monster == null)return;
 
-  monster.HP -= value;
+  monster.HP -= value * caster.damage;
   print("attack!${monster.HP}");
 }
 

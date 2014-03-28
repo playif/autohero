@@ -120,6 +120,15 @@ abstract class Game extends Entity {
     location.removeChild(role);
   }
 
+  void obtainExp(num xp) {
+    var n = roles.length;
+    num rxp = xp / n;
+
+    for (int i = 0;i < roles.length;i++) {
+      roles[i].XP += rxp;
+      roles[i].check();
+    }
+  }
 
   Monster createMonster() {
     return currentSite.createMonster();

@@ -32,12 +32,14 @@ class MyGame extends Game {
     //panel.add(new Entity());
     var header = new GameEntity();
 
-    header.height = 40;
+    header.height = 70;
     var l = new Button();
     l.text = "中文";
-    l.classes.add('box');
     header.addChild(l);
 
+    var l2 = new Button();
+    l2.text = "中文2";
+    header.addChild(l2);
 
     var body = new GameEntity();
     //body.height = window.screen.height;
@@ -49,7 +51,9 @@ class MyGame extends Game {
 
 
     var rolePanel = new GameEntity();
-    rolePanel.width = 100;
+    rolePanel.width = 200;
+    //    rolePanel.classes.add('box');
+    //    rolePanel.classes.add('vbox');
 
     var monsterPanel = new GameEntity();
 
@@ -72,7 +76,7 @@ class MyGame extends Game {
 
     //createMonster(panel2,mon);
 
-    var r = new Role();
+    var r = Worrier();
 
     var action = Attack();
 
@@ -80,11 +84,12 @@ class MyGame extends Game {
 
     rolePanel.add(r);
 
-    var r2 = new Role();
+    var r2 = Worrier();
 
     var action2 = Attack();
 
     r2.add(action2);
+    r2.add(Attack());
 
     rolePanel.add(r2);
 
