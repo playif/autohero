@@ -10,7 +10,6 @@ class Site extends Entity {
   Dict<Creator<Monster>> monsters;
 }
 
- 
 Site StartLand() {
   Site site = new Site();
   site
