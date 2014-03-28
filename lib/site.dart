@@ -5,19 +5,17 @@ part of dungeon;
 //};
 
 
-
 class Site extends Entity {
-  int level=1;
+  int level = 1;
   Dict<Creator<Monster>> monsters;
-
 }
 
 
-Site StartLand(){
-  Site site=new Site();
+Site StartLand() {
+  Site site = new Site();
   site
-    ..monsters=new Dict<Creator<Monster>>(MonsterProb,[Mouse]);
-//    ..monsters
+    ..monsters = new Dict<Creator<Monster>>(MonsterProb, [Mouse]);
+  //    ..monsters
 
 }
 
