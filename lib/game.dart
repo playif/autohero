@@ -28,9 +28,11 @@ class GameEntity extends Entity {
       var me = this as ActionHost;
       me._addAction(child);
     } else if (child is Monster) {
-      game._addMonster(this, child);
+      var me = this as Game;
+      me._addMonster(child);
     } else if (child is Role) {
-      game._addRole(this, child);
+      var me = this as Game;
+      me._addRole(child);
     } else {
       super.addChild(child);
     }
@@ -41,31 +43,82 @@ class GameEntity extends Entity {
   remove(Entity child) {
 
     if (child is State) {
-      var me = this.parent as StateHost;
+      var me = this as StateHost;
       me._removeState(child);
     } else if (child is Action) {
-      var me = this.parent as ActionHost;
+      var me = this as ActionHost;
       me._removeAction(child);
     } else if (child is Monster) {
-      game._removeMonster(this, child);
+      var me = this as Game;
+      me._removeMonster(child);
     } else if (child is Role) {
-      game._removeRole(this, child);
+      var me = this as Game;
+      me._removeRole(child);
     } else {
       super.removeChild(child);
     }
   }
+
+  @override
+  GameEntity get parent => getGameParent(this);
+
+  GameEntity getGameParent(Entity entity) {
+    if (entity.entityParent is GameEntity) return entity.entityParent;
+    return getGameParent(entity.entityParent);
+  }
 }
 
+class RoleHost {
+  final List<Role> roles = [];
+  final Entity rolePanel = new Entity();
 
-abstract class Game extends Entity {
+  void _addRole(Role role) {
+    role.init();
+    roles.add(role);
+    rolePanel.addChild(role);
+  }
+
+  void _removeRole(Role role) {
+    roles.remove(role);
+    rolePanel.removeChild(role);
+  }
+}
+
+class SiteHost {
+  final Entity sitePanel = new Entity();
+  Site _currentSite = StartLand();
+
+  Site get currentSite => _currentSite;
+
+  int get siteLevel => _currentSite.level;
+
+  set siteLevel(int level) {
+    _currentSite.level = level;
+  }
+
+  void _setSite(Site site) {
+    sitePanel.remove(_currentSite);
+    sitePanel.add(site);
+    //_currentSite
+    site.init();
+    _currentSite = site;
+
+    //site.init();
+    //sites.add(site);
+    //sitePanel.addChild(role);
+  }
+
+
+//  void _removeSite(Site site) {
+//    //roles.remove(role);
+//    //rolePanel.removeChild(role);
+//  }
+}
+
+abstract class Game extends GameEntity with RoleHost, SiteHost {
   num _dt;
 
   num get deltaTime => _dt;
-
-  //  Team team=new Team();
-  List<Role> _roles = new List<Role>();
-
-  List<Role> get roles => _roles;
 
   Map<String, int> _items = new Map<String, int>();
 
@@ -75,9 +128,6 @@ abstract class Game extends Entity {
 
   List<Monster> get monsters => _monsters;
 
-  Site _currentSite = StartLand();
-
-  Site get currentSite => _currentSite;
 
   int _money = 0;
 
@@ -87,38 +137,67 @@ abstract class Game extends Entity {
 
   int get research => _research;
 
+  Entity header = new Entity();
+  Entity monsterPanel = new Entity();
 
   Game() {
     classes.add('box');
+
+    var root = new Entity();
+    var body = new Entity();
+
+    root.classes.add('box');
+    root.classes.add('vbox');
+    root.addChild(header);
+    root.add(sitePanel);
+    root.addChild(body);
+    addChild(root);
+
+
+    body.classes.add('box');
+    body.classes.add('hbox');
+    body.addChild(rolePanel);
+    body.addChild(monsterPanel);
+
+    rolePanel.width = 200;
+    sitePanel.height = 70;
+    header.height = 70;
+
+
+    _setSite(StartLand());
+    //    ProgressElement progress=new ProgressElement();
+    //    progress.value=22;
+    //    progress.max=100;
+    //    header.element.children.add(progress);
+  }
+
+  void removeAllMonsters() {
+    monsters.forEach((m) => m.leave());
   }
 
   Monster getFirstMonster() {
     if (monsters.length > 0) {
-      return monsters.first;
+      return monsters.firstWhere((m) => !m.die);
     } else return null;
   }
 
-  void _addMonster(Entity location, Monster monster) {
+  List<Monster> getAllMonster() {
+    if (monsters.length > 0) {
+      return monsters.where((m) => !m.die);
+    } else return null;
+  }
+
+  void _addMonster(Monster monster) {
     monster.init();
     monsters.add(monster);
-    location.addChild(monster);
+    monsterPanel.addChild(monster);
   }
 
-  void _removeMonster(Entity location, Monster monster) {
+  void _removeMonster(Monster monster) {
     monsters.remove(monster);
-    location.removeChild(monster);
+    monsterPanel.removeChild(monster);
   }
 
-  void _addRole(Entity location, Role role) {
-    role.init();
-    roles.add(role);
-    location.addChild(role);
-  }
-
-  void _removeRole(Entity location, Role role) {
-    roles.remove(role);
-    location.removeChild(role);
-  }
 
   void obtainExp(num xp) {
     var n = roles.length;
@@ -145,6 +224,10 @@ abstract class Game extends Entity {
 
   void _update(Timer timer) {
     _updateEntities(this);
+
+    if (monsters.length <= currentSite.maxMonster + siteLevel * 2) {
+      add(createMonster());
+    }
   }
 
   void _updateEntities(Entity entity) {

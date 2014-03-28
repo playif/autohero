@@ -13,14 +13,10 @@ class Component extends GameEntity {
 
 class ActionHost {
   List<Action> actions = [];
-  final Component actionPanel = new Component();
+  final Entity actionPanel = new Entity();
 
   _addAction(Action action) {
     action.init(this);
-
-    //owner.addChild(action);
-
-
     actionPanel.addChild(action);
   }
 
@@ -29,6 +25,7 @@ class ActionHost {
     //owner.removeChild(action);
   }
 }
+
 
 class TimeWatcher {
   Clock timerClock = new Clock();
@@ -60,7 +57,7 @@ class TimeWatcher {
   }
 }
 
-class Action extends Entity with Updatable, TimeWatcher {
+class Action extends GameEntity with Updatable, TimeWatcher {
   int level = 1;
   num effect = 1;
   String name = "action";
@@ -97,9 +94,19 @@ void AttackFirstMonster(Role caster, num value) {
   if (monster == null)return;
 
   monster.HP -= value * caster.damage;
-  print("attack!${monster.HP}");
+  //print("attack!${monster.HP}");
 }
 
+void AttackAllMonster(Role caster, num value) {
+  var monsters = game.getAllMonster();
+  if (monsters == null)return;
+
+  monsters.forEach((m) {
+    m.HP -= value * caster.damage;
+    //print("attack!${monster.HP}");
+  });
+
+}
 
 Action Attack() {
   Action attack = new Action();
@@ -115,4 +122,17 @@ Action Attack() {
 }
 
 
+Action AttackAll() {
+  Action attack = new Action();
+  attack
+    ..name = "全部攻擊"
+    ..activeTime = 2000
+  //    ..maxTime = 3000
+  //    ..effect = 5
+    ..actives[AttackAllMonster] = () {
+    return attack.effect * attack.level;
+  };
+  //state.attach(target);
+  return attack;
+}
 

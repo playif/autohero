@@ -88,10 +88,24 @@ class Dict<T> {
     return null;
   }
 
-  List<T> pickN(int n){
-    List<T> list=[];
-    for(int i=0;i<n;i++){
+  List<T> pickN(int n) {
+    List<T> list = [];
+    for (int i = 0;i < n;i++) {
       list.add(pick());
+    }
+    return list;
+  }
+
+  List<T> pickNUnique(int n) {
+    if (n > _list.length)n = _list.length;
+    List<T> list = [];
+    for (int i = 0;i < n;i++) {
+      T p = pick();
+      if (list.contains(p)) {
+        i--;
+        continue;
+      }
+      list.add(p);
     }
     return list;
   }

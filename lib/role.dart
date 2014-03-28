@@ -43,6 +43,7 @@ class Role extends GameEntity with StateHost, ActionHost, ItemHost {
 
   Bar expBar = new Bar();
   Label levelLabel = new Label();
+  Label damageLabel = new Label();
 
   void init() {
 
@@ -54,9 +55,10 @@ class Role extends GameEntity with StateHost, ActionHost, ItemHost {
       ..classes.add("small-text");
     add(levelLabel);
 
-    add(new Label()
+    add(damageLabel
       ..text = "傷害:${damage}"
       ..classes.add("small-text"));
+
 
     add(actionPanel);
     add(itemPanel);
@@ -84,13 +86,15 @@ class Role extends GameEntity with StateHost, ActionHost, ItemHost {
 
   void check() {
 
-
     if (XP >= MXP) {
       XP = 0;
       level += 1;
       levelLabel
         ..text = "等級:${level}";
       MXP += level * level * 2;
+      damage += 2;
+      damageLabel
+        ..text = "傷害:${damage}";
     }
 
     expBar.max = MXP;

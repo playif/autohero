@@ -21,6 +21,8 @@ class Monster extends GameEntity with StateHost, ActionHost {
   Label HPLabel = new Label();
 
   void init() {
+    MHP *= level;
+    XP *= level;
     _HP = MHP;
     add(new Label()
       ..text = this.name);
@@ -50,6 +52,9 @@ class Monster extends GameEntity with StateHost, ActionHost {
     onClick.listen((e) {
       HP -= 1;
     });
+
+
+    //    this.height=200;
   }
 
   //  @override
@@ -93,12 +98,12 @@ class Monster extends GameEntity with StateHost, ActionHost {
     HPLabel.text = "生命:$_HP";
   }
 
-  @override
-  remove(Entity child) {
-    if (child is State) {
-      _removeState(this, child);
-    }
-  }
+//  @override
+//  remove(Entity child) {
+//    if (child is State) {
+//      _removeState(child);
+//    }
+//  }
 
 
 }
@@ -112,7 +117,8 @@ Monster Mouse() {
   Monster monster = new Monster();
   monster
     ..name = "老鼠"
-    ..MHP = 10;
+    ..MHP = 5
+    ..XP = 3;
   return monster;
 }
 
@@ -120,7 +126,8 @@ Monster Worm() {
   Monster monster = new Monster();
   monster
     ..name = "蟲"
-    ..MHP = 20;
+    ..MHP = 7
+    ..XP = 4;
   return monster;
 }
 

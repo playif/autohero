@@ -28,7 +28,7 @@ PowerUp(Monster monster, num value, int inv) {
 
 class StateHost {
   final List<State> states = [];
-  final GameEntity statePanel = new GameEntity();
+  final Entity statePanel = new Entity();
 
   _addState(State state) {
     var oldState = states.firstWhere((s) => s.name == state.name, orElse:() => null);
@@ -57,7 +57,7 @@ class StateHost {
 
 }
 
-class State extends Entity with Updatable, TimeWatcher {
+class State extends GameEntity with Updatable, TimeWatcher {
   String name = "";
   num effect = 1;
   StateHost _target;

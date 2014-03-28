@@ -14,9 +14,12 @@ class Entity<Child extends Entity> {
 
   Entity get parent => _parent;
 
+  Entity get entityParent => _parent;
+
   final Element _element = new DivElement();
 
   Element get element => _element;
+
 
   bool _die = false;
 
@@ -66,7 +69,7 @@ class Entity<Child extends Entity> {
   }
 
   void remove(Child entity) {
-    remove(entity);
+    removeChild(entity);
   }
 
   void removeChild(Child entity) {
