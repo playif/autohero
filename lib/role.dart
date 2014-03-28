@@ -38,9 +38,9 @@ class Role extends GameEntity with StateHost, ActionHost {
   num damage = 0;
 
   @override
-  void update(Game game) {
+  void update() {
     actions.forEach((s) {
-      s.update(game);
+      s.update();
     });
   }
 

@@ -7,7 +7,7 @@ import 'dart:math';
 //import 'dart:mirrors';
 
 
-class Entity<Child extends Entity> {
+abstract class Entity<Child extends Entity> {
   Entity _parent = null;
 
   Entity get parent => _parent;
@@ -53,11 +53,7 @@ class Entity<Child extends Entity> {
     _element.classes.add("entity");
   }
 
-  void add(Child entity) {
-    _children.add(entity);
-    entity._parent = this;
-    _element.children.add(entity._element);
-  }
+  void add(Child entity);
 
   void addChild(Child entity) {
     _children.add(entity);
@@ -65,11 +61,7 @@ class Entity<Child extends Entity> {
     _element.children.add(entity._element);
   }
 
-  void remove(Child entity) {
-    _children.remove(entity);
-    entity._parent = null;
-    _element.children.remove(entity._element);
-  }
+  void remove(Child entity);
 
   void removeChild(Child entity) {
     _children.remove(entity);

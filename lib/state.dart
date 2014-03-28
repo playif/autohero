@@ -9,17 +9,17 @@ part of dungeon;
 
 typedef void StateActive<T> (T target, num value);
 
-StateActive<Monster> HPAdd = (Monster monster, num value) {
+HPAdd(Monster monster, num value) {
   monster.HP += value;
   print("active:${monster.HP}");
-};
+}
 
 typedef void StateAttach<T> (T target, num value, int inv);
 
-StateAttach<Monster> PowerUp = (Monster monster, num value, int inv) {
+PowerUp(Monster monster, num value, int inv) {
   monster.HP += value * inv;
   print("attach:$inv");
-};
+}
 
 
 //class StateCreator{
@@ -63,8 +63,7 @@ class State extends Entity with Updatable, TimeWatcher {
 
   //  num time = 10000;
   //  num timer = 0;
-  num activeTime = 1000;
-  num activeTimer = 0;
+
   int maxCount = 4;
   int currentCount = 0;
 
@@ -89,35 +88,21 @@ class State extends Entity with Updatable, TimeWatcher {
   final Map<StateAttach, Fomula> attaches = {
   };
 
-  @override
-  void update(Game game) {
-
-    num dt = game.deltaTime;
-
-    activeTimer += dt;
-    if (activeTimer >= activeTime) {
-      activeTimer = 0;
-      active();
-      currentCount++;
-      if (maxCount != 0 && currentCount >= maxCount) {
-        detach();
-        return;
-      }
-    }
-
-    super.update(game);
-  }
 
   @override
   timeUp() {
     detach();
   }
 
+  @override
   void active() {
     for (var a in actives.keys) {
       a(_target, actives[a]());
     }
-    //onEquip(role);
+    currentCount++;
+    if (maxCount != 0 && currentCount >= maxCount) {
+      detach();
+    }
   }
 
   void attach(StateHost target) {

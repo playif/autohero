@@ -22,12 +22,23 @@ class ActionHost {
 class TimeWatcher {
   num maxTime = 0;
   num timer = 0;
+  num activeTime = 1000;
+  num activeTimer = 0;
 
-  void update(Game game) {
+  void update() {
     timer += game.deltaTime;
+    activeTimer += game.deltaTime;
+    if (activeTimer >= activeTime) {
+      activeTimer = 0;
+      active();
+    }
+
     if (maxTime != 0 && timer >= maxTime) {
       timeUp();
     }
+  }
+
+  void active() {
   }
 
   void timeUp() {
@@ -36,19 +47,47 @@ class TimeWatcher {
 
 class Action extends Entity with Updatable, TimeWatcher {
   int level = 1;
+  num effect = 1;
+  String name = "action";
+  final Map<ActionActive, Fomula> actives = {
+  };
   ActionHost _owner = null;
 
+  Action() {
 
+  }
+
+  @override
+  void active() {
+    for (var a in actives.keys) {
+      a(_owner, actives[a]());
+    }
+  }
+}
+
+typedef void ActionActive<T> (T caster, num value);
+
+void AttackFirstMonster(Role caster, num value) {
+  var monster = game.getFirstMonster();
+  if (monster == null)return;
+
+  monster.HP -= value;
+  print("attack!${monster.HP}");
 }
 
 
-class Attack extends Action{
-  
+Action Attack() {
+  Action attack = new Action();
+  attack
+    ..name = "普通攻擊"
+  //    ..maxTime = 3000
+  //    ..effect = 5
+    ..actives[AttackFirstMonster] = () {
+    return attack.effect * attack.level;
+  };
+  //state.attach(target);
+  return attack;
 }
-
-
-
-
 
 
 

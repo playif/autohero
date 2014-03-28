@@ -15,21 +15,26 @@ part 'site.dart';
 part 'state.dart';
 part 'dict.dart';
 
+Game game;
+
 abstract class Updatable {
-  void update(Game game);
+  void update();
 }
 
 class GameEntity extends Entity {
 
   @override
   add(Entity child) {
-
     if (child is State) {
       var me = this as StateHost;
       me._addState(this, child);
     } else if (child is Action) {
       var me = this as ActionHost;
       me._addAction(this, child);
+    } else if (child is Monster) {
+      game._addMonster(this, child);
+    } else {
+      super.addChild(child);
     }
   }
 
@@ -43,12 +48,16 @@ class GameEntity extends Entity {
     } else if (child is Action) {
       var me = this as ActionHost;
       me._removeAction(this, child);
+    } else if (child is Monster) {
+      game._removeMonster(this, child);
+    } else {
+      super.removeChild(child);
     }
   }
 }
 
 
-class Game extends Entity {
+abstract class Game extends Entity {
   num _dt;
 
   num get deltaTime => _dt;
@@ -62,11 +71,11 @@ class Game extends Entity {
 
   Map<String, int> get items => _items;
 
-  List<Monster> _encumbrance = new List<Monster>();
+  List<Monster> _monsters = new List<Monster>();
 
-  List<Monster> get encumbrance => _encumbrance;
+  List<Monster> get monsters => _monsters;
 
-  Site _currentSite = new Site();
+  Site _currentSite = StartLand();
 
   Site get currentSite => _currentSite;
 
@@ -81,24 +90,33 @@ class Game extends Entity {
 
   Game() {
     classes.add('box');
-
-    //Upgrade up = UpgradeDict.pick();
-
-
-    //    Upgrade up = creator();
-    //    print(up.name);
-    //    var r=creator();
-    //var a=Upgrade;
-
-    //print("test3");
-
-    //var ty=reflect (list[0]);
-    //print(ty.type.metadata[0].getField(const Symbol("prob")));
-
   }
 
+  Monster getFirstMonster() {
+    if (monsters.length > 0) {
+      return monsters.first;
+    } else return null;
+  }
+
+  void _addMonster(Entity location, Monster monster) {
+    monster.init();
+    monsters.add(monster);
+    location.addChild(monster);
+  }
+
+  void _removeMonster(Entity location, Monster monster) {
+    monsters.remove(monster);
+    location.removeChild(monster);
+  }
+
+  Monster createMonster() {
+    return currentSite.createMonster();
+  }
+
+  void init();
 
   void start(Element root, [Duration dt = const Duration(milliseconds: 100)]) {
+    init();
     root.children.add(element);
     this._dt = dt.inMilliseconds;
     Timer timer = new Timer.periodic(dt, _update);
@@ -121,7 +139,7 @@ class Game extends Entity {
         continue;
       }
       if (e is Updatable) {
-        e.update(this);
+        e.update();
       }
       _updateEntities(e);
     }

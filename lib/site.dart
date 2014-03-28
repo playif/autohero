@@ -8,13 +8,20 @@ part of dungeon;
 class Site extends Entity {
   int level = 1;
   Dict<Creator<Monster>> monsters;
+
+  Monster createMonster() {
+    return monsters.pick()();
+  }
+
 }
 
 Site StartLand() {
   Site site = new Site();
   site
-    ..monsters = new Dict<Creator<Monster>>(MonsterProb, [Mouse]);
+    ..monsters = new Dict<Creator<Monster>>(MonsterProb, [Mouse, Worm]);
   //    ..monsters
+
+  return site;
 
 }
 

@@ -24,7 +24,7 @@ class Bar extends Entity with Updatable {
   }
 
   @override
-  void update(Game game) {
+  void update() {
     if (min > max) min = max;
     minBar.width = min / max * width;
   }
@@ -59,7 +59,7 @@ class Item extends Label with Updatable {
   }
 
   @override
-  void update(Game game) {
+  void update() {
     count += rand.nextInt(5);
     name.text = '${count}s';
     if (count >= 100) leave();

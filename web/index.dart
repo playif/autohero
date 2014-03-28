@@ -6,10 +6,19 @@ import 'package:htmlib/htmlib.dart';
 import 'package:htmlib/game.dart';
 //import 'ui.dart';
 
+class MonsterPanel extends GameEntity {
 
+}
 
 class MyGame extends Game {
   MyGame() {
+
+
+  }
+
+  @override
+  init() {
+
     //print(window.innerHeight);
     document.body.style.height = '${window.screen.height}';
     document.body.style.maxHeight = '${window.screen.height}';
@@ -19,20 +28,20 @@ class MyGame extends Game {
     HBox panel = new HBox();
     panel.height = window.screen.height;
 
-    add(panel);
+    addChild(panel);
     //panel.add(new Entity());
     var panel1 = new FlowBox();
 
     panel1.height = 100;
     var l = new Label();
     l.text = "中文，";
-    panel1.add(l);
+    panel1.addChild(l);
 
-    var panel2 = new FlowBox();
+    var panel2 = new MonsterPanel();
     panel2.height = window.screen.height - 100;
 
-    panel.add(panel1);
-    panel.add(panel2);
+    panel.addChild(panel1);
+    panel.addChild(panel2);
     //Entity<Box> boxes=new Entity<Box>();
     //boxes.add(new Entity());
 
@@ -53,7 +62,7 @@ class MyGame extends Game {
       //    label.height=rand.nextInt(100);
     }
 
-    var mon = Mouse();
+    var mon = createMonster();
 
     var state = Generation();
     //state.effect=10;
@@ -63,6 +72,14 @@ class MyGame extends Game {
     mon.add(Generation());
     mon.add(Generation());
     panel2.add(mon);
+    //createMonster(panel2,mon);
+
+    var r = new Role();
+
+    var action = Attack();
+    r.add(action);
+
+    panel2.add(r);
 
     for (int i = 0;i < 100000;i++) {
       var item = new Weapon();
@@ -84,6 +101,6 @@ class MyGame extends Game {
 
 
 void main() {
-  Game game = new MyGame();
+  game = new MyGame();
   game.start(document.body);
 }
