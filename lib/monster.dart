@@ -45,13 +45,12 @@ class Monster extends GameEntity with StateHost {
   //  }
 
   check() {
-    if (HP <= 0) {
-      HP = 0;
+    if (_HP <= 0) {
+      _HP = 0;
       leave();
-      print("die");
     }
-    if (HP > MHP) {
-      HP = MHP;
+    if (_HP > MHP) {
+      _HP = MHP;
     }
   }
 

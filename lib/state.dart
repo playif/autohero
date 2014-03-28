@@ -130,9 +130,6 @@ State Generation() {
     ..name = "匕首"
     ..maxTime = 3000
     ..effect = 5
-    ..attaches[PowerUp] = () {
-    return state.effect;
-  }
     ..actives[HPAdd] = () {
     return state.effect * state.stack;
   };
