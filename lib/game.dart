@@ -17,22 +17,20 @@ part 'dict.dart';
 
 Game game;
 
-abstract class Updatable {
-  void update();
-}
-
 class GameEntity extends Entity {
 
   @override
   add(Entity child) {
     if (child is State) {
       var me = this as StateHost;
-      me._addState(this, child);
+      me._addState(child);
     } else if (child is Action) {
       var me = this as ActionHost;
-      me._addAction(this, child);
+      me._addAction(child);
     } else if (child is Monster) {
       game._addMonster(this, child);
+    } else if (child is Role) {
+      game._addRole(this, child);
     } else {
       super.addChild(child);
     }
@@ -43,13 +41,15 @@ class GameEntity extends Entity {
   remove(Entity child) {
 
     if (child is State) {
-      var me = this as StateHost;
-      me._removeState(this, child);
+      var me = this.parent as StateHost;
+      me._removeState(child);
     } else if (child is Action) {
-      var me = this as ActionHost;
-      me._removeAction(this, child);
+      var me = this.parent as ActionHost;
+      me._removeAction(child);
     } else if (child is Monster) {
       game._removeMonster(this, child);
+    } else if (child is Role) {
+      game._removeRole(this, child);
     } else {
       super.removeChild(child);
     }
@@ -108,6 +108,18 @@ abstract class Game extends Entity {
     monsters.remove(monster);
     location.removeChild(monster);
   }
+
+  void _addRole(Entity location, Role role) {
+    role.init();
+    roles.add(role);
+    location.addChild(role);
+  }
+
+  void _removeRole(Entity location, Role role) {
+    roles.remove(role);
+    location.removeChild(role);
+  }
+
 
   Monster createMonster() {
     return currentSite.createMonster();

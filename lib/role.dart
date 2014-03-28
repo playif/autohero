@@ -37,11 +37,22 @@ class Role extends GameEntity with StateHost, ActionHost {
   String name = "role";
   num damage = 0;
 
+
+  void init() {
+    add(new Label()
+      ..text = this.name);
+    add(new Label()
+      ..text = "等級:${level}"
+      ..classes.add("small-text"));
+
+    add(actionPanel);
+  }
+
   @override
   void update() {
-    actions.forEach((s) {
-      s.update();
-    });
+    //    actions.forEach((s) {
+    //      s.update();
+    //    });
   }
 
 //  @override

@@ -11,14 +11,14 @@ typedef void StateActive<T> (T target, num value);
 
 HPAdd(Monster monster, num value) {
   monster.HP += value;
-  print("active:${monster.HP}");
+  //print("active:${monster.HP}");
 }
 
 typedef void StateAttach<T> (T target, num value, int inv);
 
 PowerUp(Monster monster, num value, int inv) {
   monster.HP += value * inv;
-  print("attach:$inv");
+  //print("attach:$inv");
 }
 
 
@@ -28,8 +28,9 @@ PowerUp(Monster monster, num value, int inv) {
 
 class StateHost {
   final List<State> states = [];
+  final GameEntity statePanel = new GameEntity();
 
-  _addState(Entity target, State state) {
+  _addState(State state) {
     var oldState = states.firstWhere((s) => s.name == state.name, orElse:() => null);
     if (oldState != null) {
       if (oldState.reflashOnStack) {
@@ -40,17 +41,17 @@ class StateHost {
       if (!oldState.single && oldState.maxStack > oldState.stack) {
         oldState.stack += 1;
       }
-      print("here");
+      //print("here");
     } else {
       state.attach(this);
       states.add(state);
-      target.addChild(state);
+      statePanel.addChild(state);
     }
   }
 
-  _removeState(Entity target, State state) {
+  _removeState(State state) {
     states.remove(state);
-    target.removeChild(state);
+    statePanel.removeChild(state);
   }
 
 
@@ -64,7 +65,7 @@ class State extends Entity with Updatable, TimeWatcher {
   //  num time = 10000;
   //  num timer = 0;
 
-  int maxCount = 4;
+  int maxCount = 0;
   int currentCount = 0;
 
   int maxStack = 10;
@@ -76,6 +77,19 @@ class State extends Entity with Updatable, TimeWatcher {
 
 
   State() {
+
+  }
+
+
+  init() {
+    //    timerClock.width = 50;
+    //    timerClock.height = 50;
+
+    add(timerClock);
+
+    timerClock.add(new Label()
+      ..text = this.name);
+
 
   }
 
@@ -110,6 +124,7 @@ class State extends Entity with Updatable, TimeWatcher {
     for (var a in attaches.keys) {
       a(target, attaches[a](), 1);
     }
+    init();
     //_target
     //onEquip(role);
   }
@@ -127,8 +142,22 @@ class State extends Entity with Updatable, TimeWatcher {
 State Generation() {
   State state = new State();
   state
-    ..name = "匕首"
+    ..name = "生命回復"
     ..maxTime = 3000
+    ..effect = 5
+    ..actives[HPAdd] = () {
+    return state.effect * state.stack;
+  };
+  //state.attach(target);
+  return state;
+}
+
+State Generation2() {
+  State state = new State();
+  state
+    ..name = "生命回復2"
+    ..maxTime = 30000000
+    ..activeTime = 10000
     ..effect = 5
     ..actives[HPAdd] = () {
     return state.effect * state.stack;

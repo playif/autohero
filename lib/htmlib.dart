@@ -5,9 +5,11 @@ import 'dart:async';
 import 'dart:math';
 
 //import 'dart:mirrors';
+abstract class Updatable {
+  void update();
+}
 
-
-abstract class Entity<Child extends Entity> {
+class Entity<Child extends Entity> {
   Entity _parent = null;
 
   Entity get parent => _parent;
@@ -53,7 +55,9 @@ abstract class Entity<Child extends Entity> {
     _element.classes.add("entity");
   }
 
-  void add(Child entity);
+  void add(Child entity) {
+    addChild(entity);
+  }
 
   void addChild(Child entity) {
     _children.add(entity);
@@ -61,7 +65,9 @@ abstract class Entity<Child extends Entity> {
     _element.children.add(entity._element);
   }
 
-  void remove(Child entity);
+  void remove(Child entity) {
+    remove(entity);
+  }
 
   void removeChild(Child entity) {
     _children.remove(entity);
@@ -69,13 +75,13 @@ abstract class Entity<Child extends Entity> {
     _element.children.remove(entity._element);
   }
 
-//  void _leave() {
-//    if (parent == null) {
-//      throw new Exception('No parent!');
-//    } else {
-//      parent.remove(this);
-//    }
-//  }
+  //  void _leave() {
+  //    if (parent == null) {
+  //      throw new Exception('No parent!');
+  //    } else {
+  //      parent.remove(this);
+  //    }
+  //  }
 
   void leave() {
     _die = true;
@@ -112,7 +118,7 @@ class FlowBox extends Entity {
 
 class HBox extends VBox {
   HBox() {
-    _element.classes.add('hbox');
+    classes.add('hbox');
   }
 }
 
@@ -133,9 +139,9 @@ class Label extends Entity {
   }
 
   Label() {
-    element.onClick.listen((e) {
-      leave();
-    });
+    //    element.onClick.listen((e) {
+    //      leave();
+    //    });
     //_element.text=_text;
   }
 
@@ -150,4 +156,112 @@ class Label extends Entity {
 
 class Block extends Entity {
 
+}
+
+class Bar extends Entity {
+  num max = 10;
+  num _min = 10;
+
+  set min(num val) {
+    _min = val;
+    if (_min > max) _min = max;
+    if (_min < 0) _min = 0;
+    minBar.width = _min / max * width;
+  }
+
+  num color;
+  Entity minBar = new Entity();
+
+  Bar() {
+    width = 10;
+    classes.add('border');
+    minBar.style.backgroundColor = 'red';
+
+    addChild(minBar);
+  }
+
+  @override
+  void set height(num value) {
+    super.height = value;
+    minBar.height = value;
+  }
+
+//  @override
+//  void update() {
+//
+//  }
+}
+
+class Clock extends Entity {
+  num max = 10;
+  num _min = 10;
+
+  num color;
+  Entity minBar = new Entity();
+
+  set min(num val) {
+    _min = val;
+    if (_min > max) _min = max;
+    if (_min < 0) _min = 0;
+    minBar.height = (1 - _min / max) * height;
+  }
+
+  //  @override
+  //  add(Entity child){
+  //    minBar.add(child);
+  //  }
+
+
+  Clock() {
+    width = 20;
+    height = 20;
+    classes.add('border');
+    style.overflow = 'hidden';
+    minBar.style.backgroundColor = 'rgba(200,200,200,0.6)';
+    minBar.style.position = 'absolute';
+    minBar.width = 20;
+    minBar.style.bottom = '0px';
+    minBar.style.zIndex = "1000";
+    addChild(minBar);
+  }
+
+  @override
+  void set height(num value) {
+    super.height = value;
+    minBar.height = value;
+  }
+
+//  @override
+//  void update() {
+//
+//  }
+}
+
+class Button extends Label {
+
+  Button() {
+    //    name = new Label();
+    //    name.text = "XD!";
+
+    //    onClick.listen((e) {
+    //      print('Hi');
+    //      //leave();
+    //    });
+
+    //    add(name);
+    classes.add('btn');
+  }
+
+//  @override
+//  void update() {
+//    count += rand.nextInt(5);
+//    name.text = '${count}s';
+//    if (count >= 100) leave();
+//    bar.min = count;
+//  }
+}
+
+
+class Scene extends Entity with Updatable {
+  Scene();
 }

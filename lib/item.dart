@@ -5,6 +5,21 @@ part of dungeon;
 
 */
 
+class ItemHost {
+  List<Item> items = [];
+  final GameEntity itemPanel = new GameEntity();
+
+  _addItem(Item item) {
+    item.init();
+    itemPanel.addChild(item);
+  }
+
+  _removeItem(Item item) {
+    itemPanel.removeChild(item);
+    //owner.removeChild(action);
+  }
+}
+
 Map<Creator<Item>, int> ItemProb = {
     up1:10
 };
@@ -139,6 +154,10 @@ class Item {
 //  Effect onUse = null;
 
 
+  init() {
+
+
+  }
 }
 
 

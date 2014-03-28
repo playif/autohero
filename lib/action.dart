@@ -9,23 +9,32 @@ part of dungeon;
 
 class ActionHost {
   List<Action> actions = [];
+  final GameEntity actionPanel = new GameEntity();
 
-  _addAction(Entity owner, Action action) {
-    owner.addChild(action);
+  _addAction(Action action) {
+    action.init();
+
+    //owner.addChild(action);
+
+    actionPanel.addChild(action);
   }
 
-  _removeAction(Entity owner, Action action) {
-    owner.removeChild(action);
+  _removeAction(Action action) {
+    actionPanel.removeChild(action);
+    //owner.removeChild(action);
   }
 }
 
 class TimeWatcher {
+  Clock timerClock = new Clock();
   num maxTime = 0;
   num timer = 0;
   num activeTime = 1000;
   num activeTimer = 0;
 
+
   void update() {
+    timerClock.max = activeTime;
     timer += game.deltaTime;
     activeTimer += game.deltaTime;
     if (activeTimer >= activeTime) {
@@ -36,6 +45,7 @@ class TimeWatcher {
     if (maxTime != 0 && timer >= maxTime) {
       timeUp();
     }
+    timerClock.min = activeTimer;
   }
 
   void active() {
@@ -54,6 +64,14 @@ class Action extends Entity with Updatable, TimeWatcher {
   ActionHost _owner = null;
 
   Action() {
+
+  }
+
+  init() {
+    add(timerClock);
+
+    timerClock.add(new Label()
+      ..text = this.name);
 
   }
 

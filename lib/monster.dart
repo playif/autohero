@@ -1,7 +1,7 @@
 part of dungeon;
 
 
-class Monster extends GameEntity with StateHost {
+class Monster extends GameEntity with StateHost, ActionHost {
   String name = "monster";
   num _HP = 10;
 
@@ -17,12 +17,43 @@ class Monster extends GameEntity with StateHost {
 
   int level = 1;
 
+  Bar HPBar = new Bar();
+
 
   void init() {
     _HP = MHP;
-    addChild(new Label()
+    add(new Label()
       ..text = this.name);
+    add(new Label()
+      ..text = "等級:${level}"
+      ..classes.add("small-text"));
+
+
+    add(HPBar);
+    HPBar.width = 100;
+    HPBar.height = 5;
+    HPBar.color = 0;
+    HPBar.max = MHP;
+    HPBar.min = _HP;
+
+    add(statePanel);
+    add(actionPanel);
+
+    classes.add('box');
+    classes.add('vbox');
+    classes.add('border');
+    classes.add('small-margin');
+
+    onClick.listen((e) {
+      HP -= 1;
+    });
   }
+
+  //  @override
+  //  void update() {
+  //    HPBar.min = _HP;
+  //  }
+
 
   //  @override
   //  add(Entity child) {
@@ -52,6 +83,7 @@ class Monster extends GameEntity with StateHost {
     if (_HP > MHP) {
       _HP = MHP;
     }
+    HPBar.min = _HP;
   }
 
   @override
