@@ -7,41 +7,36 @@
 
 part of dungeon;
 
-class Actor {
+class ActionHost {
   List<Action> actions = [];
 
-  attachAction(Actor state) {
-    state.Attach(this);
-    states.add(state);
-    //    add(state);
+  _addAction(Entity owner, Action action) {
+    owner.addChild(action);
   }
 
-  detachAction(Actor state) {
-    state.attach(this);
-    states.remove(state);
-    //    remove(state);
+  _removeAction(Entity owner, Action action) {
+    owner.removeChild(action);
   }
 }
 
 class TimeWatcher {
-  num time = 10000;
+  num maxTime = 0;
   num timer = 0;
 
   void update(Game game) {
     timer += game.deltaTime;
-    if (time != 0 && timer >= time) {
+    if (maxTime != 0 && timer >= maxTime) {
       timeUp();
     }
   }
 
   void timeUp() {
-
   }
 }
 
 class Action extends Entity with Updatable, TimeWatcher {
   int level = 1;
-  Actor _owner = null;
+  ActionHost _owner = null;
 
 
 }

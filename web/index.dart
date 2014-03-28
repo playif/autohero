@@ -59,7 +59,9 @@ class MyGame extends Game {
     //state.effect=10;
     //    state.attach(mon);
     mon.add(state);
-
+    mon.add(Generation());
+    mon.add(Generation());
+    mon.add(Generation());
     panel2.add(mon);
 
     for (int i = 0;i < 100000;i++) {

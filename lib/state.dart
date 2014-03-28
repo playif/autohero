@@ -10,7 +10,7 @@ part of dungeon;
 typedef void StateActive<T> (T target, num value);
 
 StateActive<Monster> HPAdd = (Monster monster, num value) {
-  monster.HP -= value;
+  monster.HP += value;
   print("active:${monster.HP}");
 };
 
@@ -22,18 +22,35 @@ StateAttach<Monster> PowerUp = (Monster monster, num value, int inv) {
 };
 
 
-class StateTarget {
+//class StateCreator{
+//  final List<Creator<State>> state = [];
+//}
+
+class StateHost {
   final List<State> states = [];
 
-  _attachState(State state) {
-    state.attach(this);
-    states.add(state);
-    //    add(state);
+  _addState(Entity target, State state) {
+    var oldState = states.firstWhere((s) => s.name == state.name, orElse:() => null);
+    if (oldState != null) {
+      if (oldState.reflashOnStack) {
+        oldState.currentCount = 0;
+        oldState.activeTimer = 0;
+        oldState.timer = 0;
+      }
+      if (!oldState.single && oldState.maxStack > oldState.stack) {
+        oldState.stack += 1;
+      }
+      print("here");
+    } else {
+      state.attach(this);
+      states.add(state);
+      target.addChild(state);
+    }
   }
 
-  _detachState(State state) {
+  _removeState(Entity target, State state) {
     states.remove(state);
-    //    remove(state);
+    target.removeChild(state);
   }
 
 
@@ -42,16 +59,22 @@ class StateTarget {
 class State extends Entity with Updatable, TimeWatcher {
   String name = "";
   num effect = 1;
-  StateTarget _target;
+  StateHost _target;
 
   //  num time = 10000;
   //  num timer = 0;
-  num activeTime = 2000;
+  num activeTime = 1000;
   num activeTimer = 0;
-  int maxCount = 2;
+  int maxCount = 4;
   int currentCount = 0;
+
+  int maxStack = 10;
   int stack = 1;
-  int maxStack = 0;
+
+  bool single = false;
+
+  bool reflashOnStack = true;
+
 
   State() {
 
@@ -97,7 +120,7 @@ class State extends Entity with Updatable, TimeWatcher {
     //onEquip(role);
   }
 
-  void attach(StateTarget target) {
+  void attach(StateHost target) {
     _target = target;
     for (var a in attaches.keys) {
       a(target, attaches[a](), 1);
@@ -120,12 +143,13 @@ State Generation() {
   State state = new State();
   state
     ..name = "匕首"
+    ..maxTime = 3000
     ..effect = 5
     ..attaches[PowerUp] = () {
     return state.effect;
   }
     ..actives[HPAdd] = () {
-    return state.effect;
+    return state.effect * state.stack;
   };
   //state.attach(target);
   return state;

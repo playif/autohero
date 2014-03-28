@@ -20,10 +20,29 @@ abstract class Updatable {
 }
 
 class GameEntity extends Entity {
+
   @override
   add(Entity child) {
-    if (child is State) {
 
+    if (child is State) {
+      var me = this as StateHost;
+      me._addState(this, child);
+    } else if (child is Action) {
+      var me = this as ActionHost;
+      me._addAction(this, child);
+    }
+  }
+
+
+  @override
+  remove(Entity child) {
+
+    if (child is State) {
+      var me = this as StateHost;
+      me._removeState(this, child);
+    } else if (child is Action) {
+      var me = this as ActionHost;
+      me._removeAction(this, child);
     }
   }
 }
@@ -66,9 +85,8 @@ class Game extends Entity {
     //Upgrade up = UpgradeDict.pick();
 
 
-
     //    Upgrade up = creator();
-//    print(up.name);
+    //    print(up.name);
     //    var r=creator();
     //var a=Upgrade;
 

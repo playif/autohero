@@ -25,7 +25,7 @@ Upgrade up2() {
 }
 
 
-class Role extends Entity with StateTarget, Actor {
+class Role extends GameEntity with StateHost, ActionHost {
 
 
   List<Item> items = [];
@@ -44,22 +44,22 @@ class Role extends Entity with StateTarget, Actor {
     });
   }
 
-  @override
-  add(Entity child) {
-    Entity.add(child);
-    super.add(child);
-    if (child is State) {
-      _attachState(child);
-    }
-  }
-
-  @override
-  remove(Entity child) {
-    super.remove(child);
-    if (child is State) {
-      _detachState(child);
-    }
-  }
+//  @override
+//  add(Entity child) {
+//    Entity.add(child);
+//    super.add(child);
+//    if (child is State) {
+//      _attachState(this,child);
+//    }
+//  }
+//
+//  @override
+//  remove(Entity child) {
+//    super.remove(child);
+//    if (child is State) {
+//      _detachState(this,child);
+//    }
+//  }
 
 }
 

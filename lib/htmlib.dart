@@ -59,7 +59,19 @@ class Entity<Child extends Entity> {
     _element.children.add(entity._element);
   }
 
+  void addChild(Child entity) {
+    _children.add(entity);
+    entity._parent = this;
+    _element.children.add(entity._element);
+  }
+
   void remove(Child entity) {
+    _children.remove(entity);
+    entity._parent = null;
+    _element.children.remove(entity._element);
+  }
+
+  void removeChild(Child entity) {
     _children.remove(entity);
     entity._parent = null;
     _element.children.remove(entity._element);
