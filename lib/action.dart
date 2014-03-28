@@ -7,16 +7,43 @@
 
 part of dungeon;
 
+class Actor {
+  List<Action> actions = [];
 
-class Action extends Entity with Updatable{
-  int level=1;
-  
-  
-  Action(){
-    
+  attachAction(Actor state) {
+    state.Attach(this);
+    states.add(state);
+    //    add(state);
   }
-  
-  
+
+  detachAction(Actor state) {
+    state.attach(this);
+    states.remove(state);
+    //    remove(state);
+  }
+}
+
+class TimeWatcher {
+  num time = 10000;
+  num timer = 0;
+
+  void update(Game game) {
+    timer += game.deltaTime;
+    if (time != 0 && timer >= time) {
+      timeUp();
+    }
+  }
+
+  void timeUp() {
+
+  }
+}
+
+class Action extends Entity with Updatable, TimeWatcher {
+  int level = 1;
+  Actor _owner = null;
+
+
 }
 
 

@@ -5,7 +5,9 @@ class Upgrade extends Entity {
   String desc;
 }
 
-Map<Creator<Upgrade>, int> upgradeProb = {up1:10};
+Map<Creator<Upgrade>, int> upgradeProb = {
+    up1:10
+};
 Dict<Upgrade> UpgradeDict = new Dict<Upgrade>(upgradeProb, [up1, up2]);
 
 Upgrade up1() {
@@ -23,8 +25,8 @@ Upgrade up2() {
 }
 
 
-class Role extends StateTarget {
-  List<Action> actions = [];
+class Role extends Entity with StateTarget, Actor {
+
 
   List<Item> items = [];
 
@@ -33,7 +35,7 @@ class Role extends StateTarget {
   num level = 0;
 
   String name = "role";
-  num damage=0;
+  num damage = 0;
 
   @override
   void update(Game game) {
@@ -42,6 +44,22 @@ class Role extends StateTarget {
     });
   }
 
+  @override
+  add(Entity child) {
+    Entity.add(child);
+    super.add(child);
+    if (child is State) {
+      _attachState(child);
+    }
+  }
+
+  @override
+  remove(Entity child) {
+    super.remove(child);
+    if (child is State) {
+      _detachState(child);
+    }
+  }
 
 }
 

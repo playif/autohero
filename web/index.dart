@@ -58,7 +58,7 @@ class MyGame extends Game {
     var state = Generation();
     //state.effect=10;
     //    state.attach(mon);
-    mon.attachState(state);
+    mon.add(state);
 
     panel2.add(mon);
 

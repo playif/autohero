@@ -19,10 +19,20 @@ abstract class Updatable {
   void update(Game game);
 }
 
+class GameEntity extends Entity {
+  @override
+  add(Entity child) {
+    if (child is State) {
+
+    }
+  }
+}
+
+
 class Game extends Entity {
   num _dt;
 
-  num get time => _dt;
+  num get deltaTime => _dt;
 
   //  Team team=new Team();
   List<Role> _roles = new List<Role>();

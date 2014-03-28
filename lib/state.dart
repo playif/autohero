@@ -22,39 +22,40 @@ StateAttach<Monster> PowerUp = (Monster monster, num value, int inv) {
 };
 
 
-class StateTarget extends Entity with Updatable {
+class StateTarget {
   final List<State> states = [];
 
-  attachState(State state) {
+  _attachState(State state) {
     state.attach(this);
     states.add(state);
-    add(state);
+    //    add(state);
   }
 
-  detachState(State state) {
-    state.attach(this);
+  _detachState(State state) {
     states.remove(state);
-    remove(state);
+    //    remove(state);
   }
 
-  @override
-  void update(Game game) {
 
-  }
 }
 
-class State<T> extends Entity with Updatable {
+class State extends Entity with Updatable, TimeWatcher {
   String name = "";
   num effect = 1;
-  T _target;
-  num time = 10000;
-  num timer = 0;
+  StateTarget _target;
+
+  //  num time = 10000;
+  //  num timer = 0;
   num activeTime = 2000;
   num activeTimer = 0;
-  int maxCount = 0;
+  int maxCount = 2;
   int currentCount = 0;
   int stack = 1;
   int maxStack = 0;
+
+  State() {
+
+  }
 
   //bool isTemp = true;
 
@@ -67,8 +68,9 @@ class State<T> extends Entity with Updatable {
 
   @override
   void update(Game game) {
-    num dt = game.time;
-    timer += dt;
+
+    num dt = game.deltaTime;
+
     activeTimer += dt;
     if (activeTimer >= activeTime) {
       activeTimer = 0;
@@ -76,13 +78,16 @@ class State<T> extends Entity with Updatable {
       currentCount++;
       if (maxCount != 0 && currentCount >= maxCount) {
         detach();
+        return;
       }
-      //TODO finished
     }
-    if (time != 0 && timer >= time) {
-      detach();
-      print("here");
-    }
+
+    super.update(game);
+  }
+
+  @override
+  timeUp() {
+    detach();
   }
 
   void active() {
@@ -92,7 +97,7 @@ class State<T> extends Entity with Updatable {
     //onEquip(role);
   }
 
-  void attach(T target) {
+  void attach(StateTarget target) {
     _target = target;
     for (var a in attaches.keys) {
       a(target, attaches[a](), 1);
@@ -107,13 +112,12 @@ class State<T> extends Entity with Updatable {
     }
     _target = null;
     leave();
-
   }
 
 }
 
-State<Monster> Generation() {
-  State<Monster> state = new State<Monster>();
+State Generation() {
+  State state = new State();
   state
     ..name = "匕首"
     ..effect = 5
