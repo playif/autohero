@@ -14,6 +14,7 @@ class Monster extends GameEntity with StateHost, ActionHost {
 
   num MHP = 10;
   num XP = 10;
+  num money = 1;
 
   int level = 1;
 
@@ -53,7 +54,11 @@ class Monster extends GameEntity with StateHost, ActionHost {
       HP -= 1;
     });
 
-
+    binding(this, const Symbol('HP'), HPBar, const Symbol('min'));
+    HPLabel.name = "生命: ";
+    binding(this, const Symbol('HP'), HPLabel, const Symbol('text'));
+    //HPLabel.text = "生命:$_HP";
+    //HPBar.min = _HP;
     //    this.height=200;
   }
 
@@ -88,14 +93,14 @@ class Monster extends GameEntity with StateHost, ActionHost {
       _HP = 0;
 
       game.obtainExp(XP);
-
+      game.obtainMoney(money);
       leave();
     }
     if (_HP > MHP) {
       _HP = MHP;
     }
-    HPBar.min = _HP;
-    HPLabel.text = "生命:$_HP";
+    //HPBar.min = _HP;
+    //HPLabel.text = "生命:$_HP";
   }
 
 //  @override
@@ -118,7 +123,8 @@ Monster Mouse() {
   monster
     ..name = "老鼠"
     ..MHP = 5
-    ..XP = 3;
+    ..XP = 3
+    ..money = 1;
   return monster;
 }
 
@@ -127,7 +133,8 @@ Monster Worm() {
   monster
     ..name = "蟲"
     ..MHP = 7
-    ..XP = 4;
+    ..XP = 4
+    ..money = 2;
   return monster;
 }
 

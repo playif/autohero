@@ -5,6 +5,8 @@ import 'dart:math';
 
 import 'htmlib.dart';
 
+import 'binging.dart';
+
 part 'action.dart';
 part 'item.dart';
 part 'monster.dart';
@@ -209,6 +211,10 @@ abstract class Game extends GameEntity with RoleHost, SiteHost {
     }
   }
 
+  void obtainMoney(num money) {
+    //this.money+=money;
+  }
+
   Monster createMonster() {
     return currentSite.createMonster();
   }
@@ -228,6 +234,8 @@ abstract class Game extends GameEntity with RoleHost, SiteHost {
     if (monsters.length <= currentSite.maxMonster + siteLevel * 3) {
       add(createMonster());
     }
+
+    checkBindings();
   }
 
   void _updateEntities(Entity entity) {

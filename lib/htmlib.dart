@@ -138,7 +138,20 @@ class Label extends Entity {
 
   void set text(String value) {
     _text = value;
-    _element.text = _text;
+    _reflash();
+  }
+
+  String _name = "";
+
+  String get name => _name;
+
+  void set name(String value) {
+    _name = value;
+    _reflash();
+  }
+
+  void _reflash() {
+    _element.text = "$_name$_text";
   }
 
   Label() {
