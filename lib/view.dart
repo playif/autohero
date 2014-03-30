@@ -24,32 +24,66 @@ initView() {
     //    updateView();
   });
 
-  document.body.children.add(_root.element);
+  //document.body.children.add(_root.element);
   //  document.body.style.height=windowHeight;
 }
 
-num _windowHeight = window.innerHeight;
+class _ViewPort {
+  num _windowHeight = window.innerHeight;
 
-num get windowHeight => _windowHeight;
+  num get windowHeight => _windowHeight;
 
-num _windowWidth = window.innerHeight;
+  num _windowWidth = window.innerHeight;
 
-num get windowWidth => _windowWidth;
+  num get windowWidth => _windowWidth;
+}
+
+View viewPort = new View();
 
 _resetWindowSize() {
-  _windowHeight = window.innerHeight;
-  _windowWidth = window.innerHeight;
-  document.body.style.height = '${_windowHeight}';
-  document.body.style.maxHeight = '${_windowWidth}';
+  viewPort.height = window.innerHeight;
+  viewPort.width = window.innerWidth;
+  document.body.style.height = '${viewPort.height}';
+  document.body.style.maxHeight = '${viewPort.width}';
 }
 
 
-updateView() {
-  
+//updateView() {
+//  _update(_root);
+//}
+
+_update(View view) {
+  view.children.removeWhere((c) => c.die);
+
+  //view.updateView();
+
+  view.children.forEach((c) => _update(c));
 }
 
+class GameView extends View {
+  init() {
 
-class View<Child extends View> {
+  }
+
+
+  List<View> getViews() {
+    return [new View()];
+  }
+
+  updateView() {
+    var views = getViews();
+    views.forEach((v) {
+      if (!children.contains(v)) {
+        children.add(v);
+      }
+    });
+
+  }
+}
+
+class View {
+  dynamic observable;
+
   View _parent = null;
 
   View get parent => _parent;
@@ -68,13 +102,13 @@ class View<Child extends View> {
   ElementStream<MouseEvent> get onClick => _element.onClick;
 
 
-  final List<Child> _children = [];
+  final List<View> _children = new List<View>();
 
-  List<Child> get children => _children ;
+  List<View> get children => _children ;
 
-  num _width;
+  num _width = 0;
 
-  num _height;
+  num _height = 0;
 
   num get width => _width;
 
@@ -94,26 +128,186 @@ class View<Child extends View> {
     _element.style.maxHeight = '${_height}px';
   }
 
-  View() {
-    _element.classes.add("view-node");
+  num _top = 0;
+
+  num get top => _top;
+
+  set top(num value) {
+    _top = value;
+    _element.style.top = '${_top}px';
+  }
+
+  num _left = 0;
+
+  num get left => _left;
+
+  set left(num value) {
+    _left = value;
+    _element.style.left = '${_left}px';
+  }
+
+  num _border = 0;
+
+  num get border => _border;
+
+  set border(num value) {
+    _border = value;
+    _element.style.borderWidth = '${_border}px';
+  }
+
+  num _borderColorH = 0;
+
+  num get borderColorH => _borderColorH;
+
+  set borderColorH(num value) {
+    _borderColorH = value;
+    _resetBorderColor();
+  }
+
+  num _borderColorS = 100;
+
+  num get borderColorS => _borderColorS;
+
+  set borderColorS(num value) {
+    _borderColorS = value;
+    _resetBorderColor();
+  }
+
+  num _borderColorL = 50;
+
+  num get borderColorL => _borderColorL;
+
+  set borderColorL(num value) {
+    _borderColorL = value;
+    _resetBorderColor();
+  }
+
+  num _borderColorA = 1;
+
+  num get borderColorA => _borderColorA;
+
+  set borderColorA(num value) {
+    _borderColorA = value;
+    _resetBorderColor();
+  }
+
+  void _resetBorderColor() {
+    _element.style.borderColor = 'hsla(${_borderColorH},${_borderColorS}%,${_borderColorL}%,${_borderColorA})';
+    //print('hsla(${_borderColorH},${_borderColorS}%,${_borderColorL}%,${_borderColorA})');
+  }
+
+  num _cellMargin = 0;
+
+  num get cellMargin => _cellMargin;
+
+  set cellMargin(num value) {
+    _cellMargin = value;
+  }
+
+  bool _visible = true;
+
+  bool get visible => _visible;
+
+  set visible(bool value) {
+    _visible = value;
+    if (value) {
+      style.display = 'block';
+    } else {
+      style.display = 'none';
+    }
   }
 
 
-  void add(Child entity) {
+  View() {
+    _element.classes.add("view-node");
+    visible = true;
+    //top=0;
+    //left=0;
+  }
+
+  //  void expandWidth(){
+  //    watch('width',entityParent,'width');
+  //  }
+
+  bool layout = true;
+  bool vertical = true;
+  bool wrap = false;
+  num cellWidth = 100;
+  num cellHeight = 100;
+
+
+  void updateView() {
+    /*
+    num ch = 0;
+    children.forEach((View v) {
+      v.top = ch;
+      //v.width = width-v.border*2;
+      //      if(v.height == null){
+      //        print("Hi");
+      //      }
+      ch += v.height+v.border*2+v.margin;
+    });
+
+    //num ch = 0;
+    children.forEach((View v) {
+      v.left = ch;
+      //v.height = height-v.border*2;
+      //      if(v.height == null){
+      //        print("Hi");
+      //      }
+      ch += v.width+v.border*2+v.margin;
+    });
+*/
+
+    if (layout) {
+      num cx = 0;
+      num cy = 0;
+      if (vertical) {
+        children.forEach((View v) {
+          if (!v.visible)return;
+          if (wrap && cy + v.height >= height) {
+            cy = 0;
+            cx += cellWidth + v.border * 2 + cellMargin;
+          }
+          v.left = cx;
+          v.top = cy;
+          cy += v.height + v.border * 2 + cellMargin;
+        });
+      } else {
+        children.forEach((View v) {
+          if (!v.visible)return;
+          if (wrap && cx + v.width >= width) {
+            cx = 0;
+            cy += cellHeight + v.border * 2 + cellMargin;
+          }
+          v.left = cx;
+          v.top = cy;
+          cx += v.width + v.border * 2 + cellMargin;
+        });
+
+      }
+    }
+
+
+    //children.forEach((c) => c.updateView());
+  }
+
+
+  void add(View entity) {
     addChild(entity);
   }
 
-  void addChild(Child entity) {
+  void addChild(View entity) {
     _children.add(entity);
     entity._parent = this;
     _element.children.add(entity._element);
   }
 
-  void remove(Child entity) {
+  void remove(View entity) {
     removeChild(entity);
   }
 
-  void removeChild(Child entity) {
+  void removeChild(View entity) {
     _children.remove(entity);
     entity._parent = null;
     _element.children.remove(entity._element);
@@ -144,16 +338,34 @@ class View<Child extends View> {
   CssClassSet get classes => _element.classes;
 }
 
-
+/*
 class VBox extends View {
-  VBox() {
-    classes.add('box');
+
+
+  updateView() {
+
+
+    super.updateView();
   }
+
+//  addChild(View entity){
+////    entity.style.position="ab"
+//    //entity.width=this.width;
+//  }
 }
 
 class FlowBox extends View {
+  num cellWidth=200;
+  num cellHeight=100;
   FlowBox() {
+
     //classes.add('box');
+  }
+
+  updateView() {
+
+
+    super.updateView();
   }
 }
 
@@ -164,9 +376,15 @@ class FlowBox extends View {
 //  }
 //}
 
-class HBox extends VBox {
+class HBox extends View {
   HBox() {
-    classes.add('hbox');
+    //classes.add('hbox');
+  }
+
+  updateView() {
+
+
+    super.updateView();
   }
 }
 
@@ -175,7 +393,7 @@ class Ser {
 
   const Ser(this.text);
 }
-
+*/
 
 Label text(String text, [String name]) {
   var label = new Label()
@@ -205,15 +423,23 @@ class Label extends View {
     _reflash();
   }
 
+  int _size = 0;
+
+  int get size => _size;
+
+  set size(int val) {
+    _size = val;
+    style.fontSize = '${_size}px';
+    height = _size + 10;
+  }
+
+
   void _reflash() {
     _element.innerHtml = "$_name$_text";
   }
 
   Label() {
-    //    element.onClick.listen((e) {
-    //      leave();
-    //    });
-    //_element.text=_text;
+    size = 20;
   }
 
 //  @override
@@ -245,8 +471,9 @@ class Bar extends View {
   View minBar = new View();
 
   Bar() {
-    width = 10;
-    classes.add('border');
+    //width = 10;
+    border = 1;
+    //classes.add('border');
     minBar.style.backgroundColor = 'red';
 
     addChild(minBar);
@@ -285,6 +512,7 @@ class Clock extends View {
 
 
   Clock() {
+    layout = false;
     width = 20;
     height = 20;
     classes.add('border');
@@ -294,6 +522,7 @@ class Clock extends View {
     minBar.width = 20;
     minBar.style.bottom = '0px';
     minBar.style.zIndex = "1000";
+    minBar.style.overflow = 'hidden';
     addChild(minBar);
   }
 
@@ -321,7 +550,10 @@ class Button extends Label {
     //    });
 
     //    add(name);
-    classes.add('btn');
+    //classes.add('btn');
+    style.borderStyle = 'solid';
+    border = 2;
+    borderColorH = 100;
   }
 
 //  @override

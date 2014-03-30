@@ -9,6 +9,18 @@ import 'package:htmlib/game.dart';
 
 
 class MyGame extends Game {
+
+  Button createMenuButton(String name, View show) {
+    var l = new Button();
+    l.text = name;
+    l.width = 100;
+    menuPanel.addChild(l);
+    l.onClick.listen((e) {
+      showPanel(show);
+    });
+
+  }
+
   MyGame() {
 
 
@@ -26,20 +38,16 @@ class MyGame extends Game {
 
     //panel.add(new Entity());
 
+    createMenuButton("戰鬥",battlePanel);
+    createMenuButton("道具", itemPanel);
 
-    var l = new Button();
-    l.text = "中文";
-    menuPanel.addChild(l);
-    l.onClick.listen((e) {
-      showPanel(battlePanel);
-    });
-
-    var l2 = new Button();
-    l2.text = "中文2";
-    menuPanel.addChild(l2);
-    l2.onClick.listen((e) {
-      showPanel(itemPanel);
-    });
+    //    var l2 = new Button();
+    //    l2.text = "中文2";
+    //    l2.width=100;
+    //    menuPanel.addChild(l2);
+    //    l2.onClick.listen((e) {
+    //      showPanel(itemPanel);
+    //    });
 
     //
     //
@@ -82,8 +90,8 @@ class MyGame extends Game {
 
     var action2 = Attack();
 
-    r2.add(action2);
-    r2.add(AttackAll());
+    //r2.add(action2);
+    //r2.add(AttackAll());
 
     add(r2);
 
@@ -108,7 +116,7 @@ class MyGame extends Game {
 
 
 void main() {
-  initView();
+  //initView();
   game = new MyGame();
-  game.start(document.body);
+  game.start();
 }

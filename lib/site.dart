@@ -43,15 +43,24 @@ class Site extends GameEntity with LevelMixin {
 
   num maxMonster = 10;
 
+  View panel = new View();
 
   void init() {
-    add(new Label()
+    width = 500;
+    height = 70;
+    vertical = false;
+    panel.width = 500;
+    panel.height = 70;
+    add(panel);
+
+    panel.add(new Label()
       ..text = this.name);
 
     levelLabel
+      ..size = 20
       ..text = "等級:${level}"
-      ..classes.add("small-text");
-    add(levelLabel);
+      ..width = 200;
+    panel.add(levelLabel);
 
     SelectElement se = new SelectElement();
     OptionElement opt = new OptionElement();
@@ -84,7 +93,9 @@ class Site extends GameEntity with LevelMixin {
     se.children.add(opt2);
 
     se.classes.add('small-text');
-    element.children.add(se);
+    panel.element.children.add(se);
+
+
 
   }
 

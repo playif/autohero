@@ -70,12 +70,16 @@ class Action extends GameEntity with Updatable, TimeWatcher {
   }
 
   init(ActionHost owner) {
+    style.overflow = 'hidden';
+    width = 20;
+    height = 20;
     _owner = owner;
-
+    timerClock.width = 20;
     add(timerClock);
 
     timerClock.add(new Label()
-      ..text = this.name);
+      ..text = this.name
+      ..style.overflow = 'hidden');
 
   }
 

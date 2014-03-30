@@ -148,26 +148,50 @@ abstract class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
   View monsterPanel = new View();
   View battlePanel = new View();
 
+  View currentPanel;
+
   //  Entity itemPanel = new Entity();
+  //View root = new View();
 
-
-
+  View body = new View();
 
   Game() {
+    //this.watch('width',this,'width');
 
+    body.watch('width', this, 'width');
+    body.watch('height', this, 'height', transform:(s) => s - 140);
+    //body.layout=false;
 
-    classes.add('box');
+    battlePanel.watch('height', body, 'height');
+    itemPanel.watch('width', this, 'width');
+    itemPanel.watch('height', body, 'height');
 
-    var root = new View();
-    var body = new View();
+    rolePanel.watch('height', body, 'height');
+    monsterPanel.watch('height', body, 'height');
+    monsterPanel.watch('width', body, 'width', transform:(s) => s - rolePanel.width);
+    monsterPanel.cellMargin = 5;
 
-    root.classes.add('box');
-    root.classes.add('vbox');
-    root.addChild(menuPanel);
-    root.add(infoPanel);
-    root.addChild(body);
+    menuPanel.watch('width', this, 'width');
+    infoPanel.watch('width', this, 'width');
+    battlePanel.watch('width', this, 'width');
 
-    addChild(root);
+    infoPanel.vertical = false;
+    menuPanel.vertical = false;
+
+    //    classes.add('box');
+    //
+    //    //var root = new VBox();
+    //    //var body = new VBox();
+    //
+    //    classes.add('box');
+    //    classes.add('vbox');
+    add(menuPanel);
+    add(infoPanel);
+    add(body);
+
+    //add(root);
+
+    //    body.expandWidth();
 
 
     body.add(battlePanel);
@@ -175,20 +199,23 @@ abstract class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
     //    body.classes.add('box');
     //    body.classes.add('hbox');
 
-    battlePanel.classes.add('box');
-    battlePanel.classes.add('hbox');
-    battlePanel.addChild(rolePanel);
-    battlePanel.addChild(monsterPanel);
+    //    battlePanel.classes.add('box');
+    //    battlePanel.classes.add('hbox');
+    battlePanel.vertical = false;
+    monsterPanel.vertical = false;
+    monsterPanel.wrap = true;
+    battlePanel.add(rolePanel);
+    battlePanel.add(monsterPanel);
 
-    itemPanel.classes.add('box');
-    itemPanel.classes.add('hbox');
-
-    menuPanel.classes.add('box');
-    menuPanel.classes.add('hbox');
-
-    monsterPanel.classes.add('box');
-    monsterPanel.classes.add('hbox');
-    monsterPanel.style.flexWrap = "wrap";
+    //    itemPanel.classes.add('box');
+    //    itemPanel.classes.add('hbox');
+    //
+    //    menuPanel.classes.add('box');
+    //    menuPanel.classes.add('hbox');
+    //
+    //    monsterPanel.classes.add('box');
+    //    monsterPanel.classes.add('hbox');
+    //    monsterPanel.style.flexWrap = "wrap";
 
     showPanel(battlePanel);
 
@@ -198,16 +225,17 @@ abstract class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
     menuPanel.height = 70;
 
 
+    _setSite(StartLand());
     //    var moneyLabel = ;
     infoPanel.add(new Label()
       ..name = "金幣: "
+      ..width = 100
       ..watch('text', this, 'money', transform:(m) {
       return "<b>$m</b>";
     }));
-    infoPanel.classes.add('box');
-    infoPanel.classes.add('hbox');
+    //    infoPanel.classes.add('box');
+    //    infoPanel.classes.add('hbox');
 
-    _setSite(StartLand());
 
     add(RedPotion());
 
@@ -216,20 +244,44 @@ abstract class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
     //    progress.value=22;
     //    progress.max=100;
     //    header.element.children.add(progress);
+    _resetWindowSize();
+    window.onResize.listen((e) {
+      _resetWindowSize();
+    });
   }
+
+  //  updateView() {
+  //
+  //
+  //
+  //    super.updateView();
+  //  }
 
 
   void showPanel(View panel) {
-    //battlePanel.style.display = "none";
-    //itemPanel.style.display = "none";
-    //panel.style.display = "-webkit-flex";
-    //panel.style.display = "flex";
+    battlePanel.visible = false;
+    itemPanel.visible = false;
+    //    battlePanel.style.display = "none";
+    //    itemPanel.style.display = "none";
+    //    panel.style.display = "-webkit-flex";
+    //    panel.style.display = "flex";
 
-    battlePanel.height = 0;
-    itemPanel.height = 0;
+
+    //    battlePanel.height = 0;
+    //    itemPanel.height = 0;
+
+    panel.visible = true;
+    //    panel.height = height - 140;
+    currentPanel = panel;
+    updateView();
+  }
 
 
-    panel.height = windowHeight - 140;
+  _resetWindowSize() {
+    height = window.innerHeight;
+    width = window.innerWidth;
+    document.body.style.height = '${height}';
+    //    document.body.style.maxHeight = '${width}';
   }
 
   void removeAllMonsters() {
@@ -280,21 +332,23 @@ abstract class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
 
   void init();
 
-  void start(Element root, [Duration dt = const Duration(milliseconds: 100)]) {
+  void start([Duration dt = const Duration(milliseconds: 100)]) {
     init();
-    root.children.add(element);
+    document.body.children.add(element);
     this._dt = dt.inMilliseconds;
     Timer timer = new Timer.periodic(dt, _update);
   }
 
   void _update(Timer timer) {
-    _updateEntities(this);
+
 
     if (monsters.length <= currentSite.maxMonster + siteLevel * 3) {
       add(createMonster());
     }
 
+
     checkBindings();
+    _updateEntities(this);
   }
 
   void _updateEntities(View entity) {
@@ -314,5 +368,6 @@ abstract class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
       }
       _updateEntities(e);
     }
+    entity.updateView();
   }
 }

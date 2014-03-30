@@ -46,7 +46,11 @@ class Role extends GameEntity with StateHost, ActionHost, ItemHost {
   Label damageLabel = new Label();
 
   void init() {
-
+    width = 200;
+    height = 200;
+    actionPanel.height = 20;
+    actionPanel.watch('width', this, 'width');
+    actionPanel.style.overflow = 'hidden';
     add(new Label()
       ..text = this.name);
 
@@ -72,10 +76,13 @@ class Role extends GameEntity with StateHost, ActionHost, ItemHost {
     expBar.min = XP;
 
     width = 190;
-    classes.add('box');
-    classes.add('vbox');
-    classes.add('border');
-    classes.add('small-margin');
+    //    classes.add('box');
+    //    classes.add('vbox');
+    //    classes.add('border');
+    //    classes.add('small-margin');
+
+    border = 1;
+    borderColorH = 0;
   }
 
   @override

@@ -23,6 +23,9 @@ class Monster extends GameEntity with StateHost, ActionHost {
   Label HPLabel = new Label();
 
   void init() {
+    width = 200;
+    height = 100;
+
     MHP *= level;
     XP *= level;
     _HP = MHP;
@@ -40,7 +43,7 @@ class Monster extends GameEntity with StateHost, ActionHost {
     add(HPLabel);
 
 
-    HPBar.width = 100;
+    HPBar.width = 200;
     HPBar.height = 5;
     HPBar.color = 0;
     HPBar.max = MHP;
@@ -51,10 +54,7 @@ class Monster extends GameEntity with StateHost, ActionHost {
     add(statePanel);
     add(actionPanel);
 
-    classes.add('box');
-    classes.add('vbox');
-    classes.add('border');
-    classes.add('small-margin');
+    border = 1;
 
     onClick.listen((e) {
       HP -= 1;

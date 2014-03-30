@@ -30,6 +30,10 @@ class Item extends GameEntity {
 
 
   init() {
+    width = 100;
+    height = 100;
+    border = 1;
+
     add(text(name));
 
   }
