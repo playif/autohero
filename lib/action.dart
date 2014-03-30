@@ -5,7 +5,7 @@
 行為本身有等級之分，
 */
 
-part of dungeon;
+part of model;
 
 class Component extends GameEntity {
   GameEntity host;
@@ -13,7 +13,7 @@ class Component extends GameEntity {
 
 class ActionHost {
   List<Action> actions = [];
-  final Entity actionPanel = new Entity();
+  final View actionPanel = new View();
 
   _addAction(Action action) {
     action.init(this);

@@ -1,11 +1,9 @@
-part of dungeon;
+part of model;
 
 
+class Team extends View {
+  int money = 0;
+  int research = 0;
 
-class Team extends Entity{
-  int money=0;
-  int research=0;
-  
-  
-  
+
 }

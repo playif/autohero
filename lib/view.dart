@@ -1,20 +1,60 @@
-library htmlib;
+library view;
+
+
+@MirrorsUsed(targets: const ['view', 'model'])
+import 'dart:mirrors';
 
 import 'dart:html';
 import 'dart:async';
 import 'dart:math';
+
+part 'binging.dart';
 
 //import 'dart:mirrors';
 abstract class Updatable {
   void update();
 }
 
-class Entity<Child extends Entity> {
-  Entity _parent = null;
+View _root = new View();
 
-  Entity get parent => _parent;
+initView() {
+  _resetWindowSize();
+  window.onResize.listen((e) {
+    _resetWindowSize();
+    //    updateView();
+  });
 
-  Entity get entityParent => _parent;
+  document.body.children.add(_root.element);
+  //  document.body.style.height=windowHeight;
+}
+
+num _windowHeight = window.innerHeight;
+
+num get windowHeight => _windowHeight;
+
+num _windowWidth = window.innerHeight;
+
+num get windowWidth => _windowWidth;
+
+_resetWindowSize() {
+  _windowHeight = window.innerHeight;
+  _windowWidth = window.innerHeight;
+  document.body.style.height = '${_windowHeight}';
+  document.body.style.maxHeight = '${_windowWidth}';
+}
+
+
+updateView() {
+  
+}
+
+
+class View<Child extends View> {
+  View _parent = null;
+
+  View get parent => _parent;
+
+  View get entityParent => _parent;
 
   final Element _element = new DivElement();
 
@@ -54,9 +94,10 @@ class Entity<Child extends Entity> {
     _element.style.maxHeight = '${_height}px';
   }
 
-  Entity() {
-    _element.classes.add("entity");
+  View() {
+    _element.classes.add("view-node");
   }
+
 
   void add(Child entity) {
     addChild(entity);
@@ -90,8 +131,12 @@ class Entity<Child extends Entity> {
     _die = true;
   }
 
-  void join(Entity parent) {
+  void join(View parent) {
     parent.add(this);
+  }
+
+  void watch(String field, View source, String sourceField, {bool twoWay:false, bindingTransformFunc transform}) {
+    binding(source, sourceField, this, field, twoWay:twoWay, transform:transform);
   }
 
   CssStyleDeclaration get style => _element.style;
@@ -100,13 +145,13 @@ class Entity<Child extends Entity> {
 }
 
 
-class VBox extends Entity {
+class VBox extends View {
   VBox() {
     classes.add('box');
   }
 }
 
-class FlowBox extends Entity {
+class FlowBox extends View {
   FlowBox() {
     //classes.add('box');
   }
@@ -131,7 +176,17 @@ class Ser {
   const Ser(this.text);
 }
 
-class Label extends Entity {
+
+Label text(String text, [String name]) {
+  var label = new Label()
+    ..text = text;
+  if (name != null) {
+    label.name = name;
+  }
+  return label;
+}
+
+class Label extends View {
   String _text = "";
 
   String get text => _text;
@@ -151,7 +206,7 @@ class Label extends Entity {
   }
 
   void _reflash() {
-    _element.text = "$_name$_text";
+    _element.innerHtml = "$_name$_text";
   }
 
   Label() {
@@ -170,11 +225,11 @@ class Label extends Entity {
 
 //class B
 
-class Block extends Entity {
+class Block extends View {
 
 }
 
-class Bar extends Entity {
+class Bar extends View {
   num max = 10;
   num _min = 10;
 
@@ -187,7 +242,7 @@ class Bar extends Entity {
   }
 
   num color;
-  Entity minBar = new Entity();
+  View minBar = new View();
 
   Bar() {
     width = 10;
@@ -209,12 +264,12 @@ class Bar extends Entity {
 //  }
 }
 
-class Clock extends Entity {
+class Clock extends View {
   num max = 10;
   num _min = 10;
 
   num color;
-  Entity minBar = new Entity();
+  View minBar = new View();
 
   set min(num val) {
     _min = val;
@@ -279,6 +334,6 @@ class Button extends Label {
 }
 
 
-class Scene extends Entity with Updatable {
+class Scene extends View with Updatable {
   Scene();
 }

@@ -1,4 +1,4 @@
-part of dungeon;
+part of model;
 
 
 //typedef void RoleState(Role role, num value);
@@ -28,7 +28,7 @@ PowerUp(Monster monster, num value, int inv) {
 
 class StateHost {
   final List<State> states = [];
-  final Entity statePanel = new Entity();
+  final View statePanel = new View();
 
   _addState(State state) {
     var oldState = states.firstWhere((s) => s.name == state.name, orElse:() => null);

@@ -1,6 +1,6 @@
-part of dungeon;
+part of model;
 
-class Upgrade extends Entity {
+class Upgrade extends View {
   String name;
   String desc;
 }

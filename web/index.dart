@@ -2,7 +2,7 @@ import 'dart:html';
 import 'dart:math';
 import 'dart:async';
 
-import 'package:htmlib/htmlib.dart';
+import 'package:htmlib/view.dart';
 import 'package:htmlib/game.dart';
 //import 'ui.dart';
 
@@ -29,12 +29,17 @@ class MyGame extends Game {
 
     var l = new Button();
     l.text = "中文";
-    header.addChild(l);
+    menuPanel.addChild(l);
+    l.onClick.listen((e) {
+      showPanel(battlePanel);
+    });
 
     var l2 = new Button();
     l2.text = "中文2";
-    header.addChild(l2);
-
+    menuPanel.addChild(l2);
+    l2.onClick.listen((e) {
+      showPanel(itemPanel);
+    });
 
     //
     //
@@ -103,6 +108,7 @@ class MyGame extends Game {
 
 
 void main() {
+  initView();
   game = new MyGame();
   game.start(document.body);
 }

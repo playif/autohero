@@ -1,4 +1,4 @@
-part of dungeon;
+part of model;
 
 //Map<String, Site> SiteMap = {
 //  "a": new Site(),

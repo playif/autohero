@@ -1,5 +1,6 @@
-part of dungeon;
+part of model;
 
+const Sym_HP = const Symbol('HP');
 
 class Monster extends GameEntity with StateHost, ActionHost {
   String name = "monster";
@@ -32,15 +33,20 @@ class Monster extends GameEntity with StateHost, ActionHost {
       ..classes.add("small-text"));
 
     HPLabel.classes.add("small-text");
-    HPLabel.text = "生命:$_HP";
+    HPLabel.name = "生命: ";
+
+    //bf(this,HP,HPLabel,HPLabel.text);
+    binding(this, 'HP', HPLabel, 'text');
     add(HPLabel);
 
-    add(HPBar);
+
     HPBar.width = 100;
     HPBar.height = 5;
     HPBar.color = 0;
     HPBar.max = MHP;
-    HPBar.min = _HP;
+    binding(this, 'HP', HPBar, 'min');
+    add(HPBar);
+
 
     add(statePanel);
     add(actionPanel);
@@ -54,9 +60,7 @@ class Monster extends GameEntity with StateHost, ActionHost {
       HP -= 1;
     });
 
-    binding(this, const Symbol('HP'), HPBar, const Symbol('min'));
-    HPLabel.name = "生命: ";
-    binding(this, const Symbol('HP'), HPLabel, const Symbol('text'));
+
     //HPLabel.text = "生命:$_HP";
     //HPBar.min = _HP;
     //    this.height=200;

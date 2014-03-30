@@ -1,4 +1,4 @@
-part of dungeon;
+part of model;
 
 /*
 道具有分裝備品、消耗品、和收藏品。
@@ -7,17 +7,33 @@ part of dungeon;
 
 class ItemHost {
   List<Item> items = [];
-  final GameEntity itemPanel = new GameEntity();
+  final View itemPanel = new View();
 
   _addItem(Item item) {
     item.init();
+    items.add(item);
     itemPanel.addChild(item);
   }
 
   _removeItem(Item item) {
+    items.remove(item);
     itemPanel.removeChild(item);
     //owner.removeChild(action);
   }
+}
+
+
+class Item extends GameEntity {
+  String name = "item";
+
+  //  Effect onUse = null;
+
+
+  init() {
+    add(text(name));
+
+  }
+
 }
 
 Map<Creator<Item>, int> ItemProb = {
@@ -26,12 +42,9 @@ Map<Creator<Item>, int> ItemProb = {
 
 Dict<Creator<Item>> ItemDict = new Dict<Creator<Item>>(upgradeProb, [up1, up2]);
 
-Item RedPotion() {
-  Item item = new Item()
-    ..name = "紅藥水"
-    ..onUse = (Role role) {
-
-  };
+Consumable RedPotion() {
+  Consumable item = new Consumable()
+    ..name = "紅藥水";
 
 
   return item;
@@ -149,16 +162,6 @@ typedef void Effect(Role role);
 
 typedef num Fomula();
 
-class Item {
-  String name = "item";
-//  Effect onUse = null;
-
-
-  init() {
-
-
-  }
-}
 
 
 class Weapon extends Item {
@@ -210,13 +213,33 @@ class Weapon extends Item {
 class Consumable extends Item {
   int number;
 
-  Effect onUse = null;
+
+  final Map<Attribute, Fomula> fomulas = {
+  };
+
+  use() {
+
+  }
+
+  //Effect onUse = null;
+
+  @override
+  init() {
+    super.init();
+
+    onClick.listen((e) {
+      print("hi");
+    });
 
 
+  }
 }
+
 
 class Treasure extends Item {
   int number;
+
+
   Effect onObtain = null;
 //  Effect onLost = null;
 

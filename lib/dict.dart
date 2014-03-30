@@ -1,4 +1,4 @@
-part of dungeon;
+part of model;
 
 int PROB = 100;
 
