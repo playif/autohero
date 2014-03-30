@@ -565,6 +565,54 @@ class Button extends Label {
 //  }
 }
 
+class Select extends View {
+  SelectElement select = new SelectElement();
+  List<OptionElement> options = new List<OptionElement>();
+
+  ElementStream<Event> get onChange => select.onChange;
+
+  Select() {
+    element.children.add(select);
+    select.classes.add('small-text');
+    //    OptionElement opt = new OptionElement();
+    //    opt.text = "test1";
+    //    opt.value = "hi";
+    //    select.children.add(opt);
+    //    OptionElement opt2 = new OptionElement();
+    //    opt2.text = "test2";
+    //    opt2.value = "hi";
+    //    select.onChange.listen((s) {
+    //      level += 1;
+    //
+    //      //..classes.add("small-text");
+    //      //game._setSite(StartLand2());
+    //      game.removeAllMonsters();
+    //      //print("hi");
+    //      for (int i = 0;i < 1;i++) {
+    //        var mon = createMonster();
+    //
+    //        var state = Generation();
+    //        //state.effect=10;
+    //        //    state.attach(mon);
+    //        mon.add(state);
+    //        mon.add(Generation());
+    //        mon.add(Generation2());
+    //        mon.add(Generation());
+    //        game.add(mon);
+    //      }
+    //    });
+
+    //select.children.add(opt2);
+  }
+
+  void createOption(String text, String value) {
+    OptionElement opt = new OptionElement();
+    opt.text = text;
+    opt.value = value;
+    select.children.add(opt);
+    options.add(opt);
+  }
+}
 
 class Scene extends View with Updatable {
   Scene();

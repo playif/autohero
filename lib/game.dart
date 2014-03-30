@@ -172,6 +172,8 @@ abstract class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
     monsterPanel.cellMargin = 5;
 
     menuPanel.watch('width', this, 'width');
+    menuPanel.cellMargin = 10;
+
     infoPanel.watch('width', this, 'width');
     battlePanel.watch('width', this, 'width');
 

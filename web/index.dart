@@ -13,7 +13,8 @@ class MyGame extends Game {
   Button createMenuButton(String name, View show) {
     var l = new Button();
     l.text = name;
-    l.width = 100;
+    l.width = 120;
+    l.size = 40;
     menuPanel.addChild(l);
     l.onClick.listen((e) {
       showPanel(show);
@@ -39,7 +40,9 @@ class MyGame extends Game {
     //panel.add(new Entity());
 
     createMenuButton("戰鬥",battlePanel);
+    createMenuButton("地圖", itemPanel);
     createMenuButton("道具", itemPanel);
+    createMenuButton("日記", itemPanel);
 
     //    var l2 = new Button();
     //    l2.text = "中文2";

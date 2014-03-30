@@ -45,16 +45,19 @@ class Site extends GameEntity with LevelMixin {
 
   View panel = new View();
 
+  Select select = new Select();
+
   void init() {
     width = 500;
     height = 70;
-    vertical = false;
+    panel.vertical = false;
     panel.width = 500;
     panel.height = 70;
     add(panel);
 
     panel.add(new Label()
-      ..text = this.name);
+      ..text = this.name
+      ..width = 200);
 
     levelLabel
       ..size = 20
@@ -62,39 +65,43 @@ class Site extends GameEntity with LevelMixin {
       ..width = 200;
     panel.add(levelLabel);
 
-    SelectElement se = new SelectElement();
-    OptionElement opt = new OptionElement();
-    opt.text = "test1";
-    opt.value = "hi";
-    se.children.add(opt);
-    OptionElement opt2 = new OptionElement();
-    opt2.text = "test2";
-    opt2.value = "hi";
-    se.onChange.listen((s) {
-      level += 1;
+    select.createOption("t1", "t1");
+    select.createOption("t2", "t2");
 
-      //..classes.add("small-text");
-      //game._setSite(StartLand2());
-      game.removeAllMonsters();
-      //print("hi");
-      for (int i = 0;i < 1;i++) {
-        var mon = createMonster();
+    panel.add(select);
 
-        var state = Generation();
-        //state.effect=10;
-        //    state.attach(mon);
-        mon.add(state);
-        mon.add(Generation());
-        mon.add(Generation2());
-        mon.add(Generation());
-        game.add(mon);
-      }
-    });
-    se.children.add(opt2);
-
-    se.classes.add('small-text');
-    panel.element.children.add(se);
-
+    //    SelectElement se = new SelectElement();
+    //    OptionElement opt = new OptionElement();
+    //    opt.text = "test1";
+    //    opt.value = "hi";
+    //    se.children.add(opt);
+    //    OptionElement opt2 = new OptionElement();
+    //    opt2.text = "test2";
+    //    opt2.value = "hi";
+    //    se.onChange.listen((s) {
+    //      level += 1;
+    //
+    //      //..classes.add("small-text");
+    //      //game._setSite(StartLand2());
+    //      game.removeAllMonsters();
+    //      //print("hi");
+    //      for (int i = 0;i < 1;i++) {
+    //        var mon = createMonster();
+    //
+    //        var state = Generation();
+    //        //state.effect=10;
+    //        //    state.attach(mon);
+    //        mon.add(state);
+    //        mon.add(Generation());
+    //        mon.add(Generation2());
+    //        mon.add(Generation());
+    //        game.add(mon);
+    //      }
+    //    });
+    //    se.children.add(opt2);
+    //
+    ////    se.classes.add('small-text');
+    //    panel.element.children.add(se);
 
 
   }
@@ -136,6 +143,7 @@ Site StartLand() {
   Site site = new Site();
 
   site
+    ..name = "試煉之地"
     ..monsters = new Dict<Creator<Monster>>(MonsterProb, [Mouse, Worm])
     ..monsterBuffs = new Dict<MonsterBuff>(MonsterBuffProb, [BigMonster, BigMonster3])
     ..progressFunc = () {
