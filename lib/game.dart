@@ -98,15 +98,21 @@ class SiteHost {
 
   int get siteLevel => _currentSite.level;
 
+  List<Site> _sites = [StartLand(), StartLand2()];
+
+  List<Site> get sites => _sites;
+
+  View sitePanel = new View();
+
   set siteLevel(int level) {
     _currentSite.level = level;
   }
 
-  void _setSite(Site site) {
+  void setSite(Site site) {
     infoPanel.remove(_currentSite);
     infoPanel.add(site);
     //_currentSite
-    site.init();
+
     _currentSite = site;
 
     //site.init();
@@ -130,7 +136,6 @@ abstract class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
   Map<String, int> _items = new Map<String, int>();
 
   //  Map<String, int> get items => _items;
-
   List<Monster> _monsters = new List<Monster>();
 
   List<Monster> get monsters => _monsters;
@@ -139,14 +144,16 @@ abstract class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
   int money = 0;
 
   //int get money => _money;
-
   int _research = 0;
 
   int get research => _research;
 
   View menuPanel = new View();
+  View contentPanel = new View();
+
   View monsterPanel = new View();
   View battlePanel = new View();
+
 
   View currentPanel;
 
@@ -155,97 +162,90 @@ abstract class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
 
   View body = new View();
 
+  bindBodyPanel(View panel) {
+    panel.watch('width', body, 'width');
+    panel.watch('height', body, 'height');
+    body.add(panel);
+  }
+
   Game() {
     //this.watch('width',this,'width');
 
-    body.watch('width', this, 'width');
-    body.watch('height', this, 'height', transform:(s) => s - 140);
-    //body.layout=false;
+    body.watch('width', this, 'width', transform:(s) => s - 200);
+    body.watch('height', contentPanel, 'height');
 
-    battlePanel.watch('height', body, 'height');
-    itemPanel.watch('width', this, 'width');
-    itemPanel.watch('height', body, 'height');
+    bindBodyPanel(battlePanel);
+    bindBodyPanel(itemPanel);
+    bindBodyPanel(sitePanel);
 
-    rolePanel.watch('height', body, 'height');
-    monsterPanel.watch('height', body, 'height');
-    monsterPanel.watch('width', body, 'width', transform:(s) => s - rolePanel.width);
-    monsterPanel.cellMargin = 5;
+    itemPanel.vertical = false;
+    itemPanel.wrap = true;
 
-    menuPanel.watch('width', this, 'width');
-    menuPanel.cellMargin = 10;
-
-    infoPanel.watch('width', this, 'width');
-    battlePanel.watch('width', this, 'width');
-
-    infoPanel.vertical = false;
-    menuPanel.vertical = false;
-
-    //    classes.add('box');
-    //
-    //    //var root = new VBox();
-    //    //var body = new VBox();
-    //
-    //    classes.add('box');
-    //    classes.add('vbox');
-    add(menuPanel);
-    add(infoPanel);
-    add(body);
-
-    //add(root);
-
-    //    body.expandWidth();
-
-
-    body.add(battlePanel);
-    body.add(itemPanel);
-    //    body.classes.add('box');
-    //    body.classes.add('hbox');
-
-    //    battlePanel.classes.add('box');
-    //    battlePanel.classes.add('hbox');
     battlePanel.vertical = false;
-    monsterPanel.vertical = false;
-    monsterPanel.wrap = true;
     battlePanel.add(rolePanel);
     battlePanel.add(monsterPanel);
 
-    //    itemPanel.classes.add('box');
-    //    itemPanel.classes.add('hbox');
-    //
-    //    menuPanel.classes.add('box');
-    //    menuPanel.classes.add('hbox');
-    //
-    //    monsterPanel.classes.add('box');
-    //    monsterPanel.classes.add('hbox');
-    //    monsterPanel.style.flexWrap = "wrap";
+    rolePanel.width = 200;
+    rolePanel.watch('height', body, 'height');
+
+    monsterPanel.watch('height', body, 'height');
+    monsterPanel.watch('width', body, 'width', transform:(s) => s - rolePanel.width);
+    monsterPanel.cellMargin = 5;
+    monsterPanel.vertical = false;
+    monsterPanel.wrap = true;
+
+    menuPanel.height = 70;
+    menuPanel.watch('width', this, 'width');
+    menuPanel.cellMargin = 10;
+    menuPanel.vertical = false;
+
+    infoPanel.watch('height', contentPanel, 'height');
+    infoPanel.width = 200;
+
+    contentPanel.watch('height', this, 'height', transform:(s) => s - 70);
+    contentPanel.watch('width', this, 'width');
+    contentPanel.vertical = false;
+
+    //infoPanel.vertical = false;
+
+    add(menuPanel);
+    add(contentPanel);
+    contentPanel.add(infoPanel);
+    contentPanel.add(body);
+
 
     showPanel(battlePanel);
 
-
-    rolePanel.width = 200;
-    infoPanel.height = 70;
-    menuPanel.height = 70;
-
-
-    _setSite(StartLand());
+    //    setSite(StartLand());
     //    var moneyLabel = ;
+
+    infoPanel.border = 0;
+
+    infoPanel.add(new Label()
+      ..text = '資訊版面');
+
     infoPanel.add(new Label()
       ..name = "金幣: "
-      ..width = 100
       ..watch('text', this, 'money', transform:(m) {
       return "<b>$m</b>";
     }));
-    //    infoPanel.classes.add('box');
-    //    infoPanel.classes.add('hbox');
+
+
+    sites.forEach((s) {
+      s.init();
+      SiteButton siteButton = new SiteButton();
+      siteButton.site = s;
+      siteButton.init();
+      sitePanel.add(siteButton);
+    });
+
+    setSite(sites[0]);
+    //sitePanel.add()
 
 
     add(RedPotion());
+    add(RedPotion());
 
-
-    //    ProgressElement progress=new ProgressElement();
-    //    progress.value=22;
-    //    progress.max=100;
-    //    header.element.children.add(progress);
     _resetWindowSize();
     window.onResize.listen((e) {
       _resetWindowSize();
@@ -261,8 +261,12 @@ abstract class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
 
 
   void showPanel(View panel) {
-    battlePanel.visible = false;
-    itemPanel.visible = false;
+    body.children.forEach((p) {
+      p.visible = false;
+    });
+    //    battlePanel.visible = false;
+    //    itemPanel.visible = false;
+    //    sitePanel.visible = false;
     //    battlePanel.style.display = "none";
     //    itemPanel.style.display = "none";
     //    panel.style.display = "-webkit-flex";
@@ -328,6 +332,10 @@ abstract class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
     this.money += money;
   }
 
+  void obtainLoot(Item item) {
+    add(item);
+  }
+
   Monster createMonster() {
     return currentSite.createMonster();
   }
@@ -344,8 +352,12 @@ abstract class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
   void _update(Timer timer) {
 
 
-    if (monsters.length <= currentSite.maxMonster + siteLevel * 3) {
-      add(createMonster());
+    if (monsters.length == 0) {
+      var max = rand.nextInt(currentSite.maxMonster);
+      for (int i = 0;i < max;i++) {
+        add(createMonster());
+      }
+      currentSite.progress();
     }
 
 

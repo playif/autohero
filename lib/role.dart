@@ -47,7 +47,7 @@ class Role extends GameEntity with StateHost, ActionHost, ItemHost {
 
   void init() {
     width = 200;
-    height = 200;
+    height = 150;
     actionPanel.height = 20;
     actionPanel.watch('width', this, 'width');
     actionPanel.style.overflow = 'hidden';

@@ -459,6 +459,7 @@ class Bar extends View {
   num max = 10;
   num _min = 10;
 
+  num get min => _min;
   set min(num val) {
     _min = val;
     if (_min > max) _min = max;
@@ -466,6 +467,7 @@ class Bar extends View {
     minBar.width = _min / max * width;
     element.title = "(${_min.ceil()}/$max)";
   }
+
 
   num color;
   View minBar = new View();
@@ -612,6 +614,21 @@ class Select extends View {
     select.children.add(opt);
     options.add(opt);
   }
+
+  String currentSelectValue() {
+    return select.options[select.selectedIndex].value;
+  }
+
+  String currentSelectText() {
+    return select.options[select.selectedIndex].text;
+  }
+
+  int get selectedIndex => select.selectedIndex;
+
+  void set selectedIndex(int index) {
+    select.selectedIndex = index;
+  }
+
 }
 
 class Scene extends View with Updatable {

@@ -40,11 +40,6 @@ class Item extends GameEntity {
 
 }
 
-Map<Creator<Item>, int> ItemProb = {
-    up1:10
-};
-
-Dict<Creator<Item>> ItemDict = new Dict<Creator<Item>>(upgradeProb, [up1, up2]);
 
 Consumable RedPotion() {
   Consumable item = new Consumable()
@@ -165,7 +160,6 @@ Mystery(Weapon item) {
 typedef void Effect(Role role);
 
 typedef num Fomula();
-
 
 
 class Weapon extends Item {

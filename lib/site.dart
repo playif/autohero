@@ -13,22 +13,38 @@ Dict<int> monsterBuffNumber = new Dict<int>(MonsterBuffNumber, [0, 1, 2]);
 typedef num ProgressFunc();
 
 
-class LevelMixin {
-  int _level = 1;
+class SiteButton extends GameEntity {
+  Site site;
 
-  int get level => _level;
+  void init() {
+    width = 100;
+    height = 100;
+    border = 1;
 
-  void set level(int lv) {
-    _level = lv;
-    levelLabel
-      ..text = "等級:${_level}";
+    add(new Label()
+      ..text = site.name);
+
+    onClick.listen((s) {
+      game.setSite(site);
+    });
   }
 
-  Label levelLabel = new Label();
 }
 
-class Site extends GameEntity with LevelMixin {
+class Site extends GameEntity {
+  int level = 1;
+
+  //  int get level => _level;
+  //
+  //  void set level(int lv) {
+  //    _level = lv;
+  //    levelLabel
+  //      ..text = "等級:${_level}";
+  //  }
+
+  Label levelLabel = new Label();
   int maxLevel = 3;
+  int currentMaxLevel = 1;
   ProgressFunc levelFunc;
   int monsterLevel = 1;
 
@@ -41,35 +57,55 @@ class Site extends GameEntity with LevelMixin {
   Dict<Creator<Monster>> monsters;
   Dict<MonsterBuff> monsterBuffs;
 
-  num maxMonster = 10;
+  num maxMonster = 3;
 
   View panel = new View();
 
   Select select = new Select();
 
+  Bar progressBar = new Bar();
+
   void init() {
-    width = 500;
-    height = 70;
-    panel.vertical = false;
-    panel.width = 500;
-    panel.height = 70;
+    width = 200;
+    height = 200;
+    //panel.vertical = false;
+    panel.width = 200;
+    panel.height = 200;
     add(panel);
 
     panel.add(new Label()
-      ..text = this.name
-      ..width = 200);
+      ..name = '場地: '
+      ..text = this.name);
 
     levelLabel
-      ..size = 20
-      ..text = "等級:${level}"
-      ..width = 200;
+      ..size = 20;
+    levelLabel.name = '等級: ';
+    levelLabel.watch('text', this, 'level');
     panel.add(levelLabel);
 
-    select.createOption("t1", "t1");
-    select.createOption("t2", "t2");
+    setLevel(1);
+
+
+    select.createOption("level $level", "$level");
+    //select.width=200;
+    //    select.createOption("level 1", "1");
+    //    select.createOption("level 2", "2");
 
     panel.add(select);
 
+    select.onChange.listen((s) {
+      game.removeAllMonsters();
+
+      setLevel(select.selectedIndex + 1);
+    });
+    select.height = 40;
+
+    progressBar.width = 180;
+    progressBar.height = 10;
+    //progressBar.borderColorH=50;
+    progressBar.watch('max', this, 'maxProgress');
+    progressBar.watch('min', this, 'currentProgress');
+    panel.add(progressBar);
     //    SelectElement se = new SelectElement();
     //    OptionElement opt = new OptionElement();
     //    opt.text = "test1";
@@ -109,10 +145,7 @@ class Site extends GameEntity with LevelMixin {
   Monster createMonster() {
     Monster monster = monsters.pick()();
     var bn = monsterBuffNumber.pick();
-    //    for (int i = 0;i < bn;i++) {
-    //      MonsterBuff buff = monsterBuffs.pick();
-    //      buff(monster);
-    //    }
+
     monster.level = monsterLevel + levelFunc();
 
     monsterBuffs.pickNUnique(bn).forEach((b) => b(monster));
@@ -122,21 +155,36 @@ class Site extends GameEntity with LevelMixin {
   }
 
   void progress() {
-    currentProgress += 1;
+    currentProgress += 10;
     if (currentProgress >= maxProgress) {
-      setLevel(level + 1);
+      levelUP();
     }
   }
 
   void setLevel(int lv) {
-    if (level == maxLevel)return;
+    //    if (level >= maxLevel)return;
     level = lv;
+    select.selectedIndex = level - 1;
     currentProgress = 0;
     maxProgress = progressFunc();
+  }
+
+  void levelUP() {
+    if (level >= maxLevel)return;
+    level += 1;
+
+    if (currentMaxLevel < level) {
+      select.createOption("level $level", "$level");
+      currentMaxLevel = level;
+    }
+    setLevel(level);
   }
 }
 
 Map<MonsterBuff, int> MonsterBuffProb = {
+};
+
+Map<Creator<Monster>, int> MonsterProb = {
 };
 
 Site StartLand() {
@@ -147,7 +195,7 @@ Site StartLand() {
     ..monsters = new Dict<Creator<Monster>>(MonsterProb, [Mouse, Worm])
     ..monsterBuffs = new Dict<MonsterBuff>(MonsterBuffProb, [BigMonster, BigMonster3])
     ..progressFunc = () {
-    return site.level * 50 + 100;
+    return site.level * 50;
   }
     ..levelFunc = () {
     return site.level * 1 + rand.nextInt(2);
@@ -163,7 +211,7 @@ Site StartLand2() {
     ..monsters = new Dict<Creator<Monster>>(MonsterProb, [Mouse])
     ..monsterBuffs = new Dict<MonsterBuff>(MonsterBuffProb, [BigMonster, BigMonster2, BigMonster3])
     ..progressFunc = () {
-    return site.level * 50 + 100;
+    return site.level * 50;
   }
     ..levelFunc = () {
     return site.level * 1 + rand.nextInt(3);

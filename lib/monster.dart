@@ -22,6 +22,8 @@ class Monster extends GameEntity with StateHost, ActionHost {
   Bar HPBar = new Bar();
   Label HPLabel = new Label();
 
+  Dict<Creator<Item>> loot;
+
   void init() {
     width = 200;
     height = 100;
@@ -57,7 +59,7 @@ class Monster extends GameEntity with StateHost, ActionHost {
     border = 1;
 
     onClick.listen((e) {
-      HP -= 1;
+      HP -= 100;
     });
 
 
@@ -98,6 +100,8 @@ class Monster extends GameEntity with StateHost, ActionHost {
 
       game.obtainExp(XP);
       game.obtainMoney(money);
+      game.obtainLoot(loot.pick()());
+
       leave();
     }
     if (_HP > MHP) {
@@ -118,8 +122,11 @@ class Monster extends GameEntity with StateHost, ActionHost {
 }
 
 
-Map<Creator<Monster>, int> MonsterProb = {
+Map<Creator<Item>, int> ItemProb = {
+    //    up1:10
 };
+
+Dict<Creator<Item>> ItemDict = new Dict<Creator<Item>>(ItemProb, [RedPotion, Dagger]);
 
 
 Monster Mouse() {
@@ -128,7 +135,8 @@ Monster Mouse() {
     ..name = "老鼠"
     ..MHP = 5
     ..XP = 3
-    ..money = 1;
+    ..money = 1
+    ..loot = new Dict(ItemProb, [RedPotion, Dagger]);
   return monster;
 }
 
@@ -138,7 +146,8 @@ Monster Worm() {
     ..name = "蟲"
     ..MHP = 7
     ..XP = 4
-    ..money = 2;
+    ..money = 2
+    ..loot = new Dict(ItemProb, [RedPotion, Dagger, ShortSword]);
   return monster;
 }
 

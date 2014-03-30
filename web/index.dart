@@ -40,7 +40,8 @@ class MyGame extends Game {
     //panel.add(new Entity());
 
     createMenuButton("戰鬥",battlePanel);
-    createMenuButton("地圖", itemPanel);
+    createMenuButton("隊伍", sitePanel);
+    createMenuButton("地圖", sitePanel);
     createMenuButton("道具", itemPanel);
     createMenuButton("日記", itemPanel);
 
