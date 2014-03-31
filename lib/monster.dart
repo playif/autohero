@@ -2,6 +2,25 @@ part of model;
 
 //const Sym_HP = const Symbol('HP');
 
+class BattleMonsterPanel extends View {
+
+  Map<Monster, View> views = {
+  };
+
+  @override
+  void handleMsg(String msg, data) {
+    if (msg == ADD_MONSTER) {
+      MonsterView view = new MonsterView(data);
+      views[data] = view;
+      add(view);
+    } else if (msg == REMOVE_MONSTER) {
+      remove(views[data]);
+      views.remove(data);
+    }
+    //super.sendMsg(msg,data);
+  }
+}
+
 class MonsterView extends View {
 
   final Monster monster;
@@ -25,19 +44,19 @@ class MonsterView extends View {
     add(new Label()
       ..text = monster.name);
 
-    breakLine();
+    //breakLine();
 
     add(new Label()
       ..text = "等級:${monster.level}"
       ..classes.add("small-text"));
 
-    breakLine();
+    //breakLine();
 
     HPLabel.classes.add("small-text");
     HPLabel.name = "生命: ";
 
     //bf(this,HP,HPLabel,HPLabel.text);
-    binding(this, 'HP', HPLabel, 'text');
+    binding(monster, 'HP', HPLabel, 'text');
     add(HPLabel);
 
 
@@ -45,7 +64,7 @@ class MonsterView extends View {
     HPBar.height = 5;
     HPBar.color = 0;
     HPBar.max = monster.MHP;
-    binding(this, 'HP', HPBar, 'min');
+    binding(monster, 'HP', HPBar, 'min');
     add(HPBar);
 
 
@@ -87,7 +106,6 @@ class Monster extends Model {
   Dict<Creator<Item>> loot;
 
 
-
   //  @override
   //  void update() {
   //    HPBar.min = _HP;
@@ -120,9 +138,9 @@ class Monster extends Model {
 
       obtainExp(XP);
       obtainMoney(money);
-      obtainLoot(loot.pick()());
-
-      leave();
+      addInventoryItem(loot.pick()());
+      removeMonster(this);
+      //leave();
     }
     if (_HP > MHP) {
       _HP = MHP;

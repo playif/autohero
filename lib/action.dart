@@ -36,8 +36,8 @@ class TimeWatcher {
 
   void update() {
 
-    timer += deltaTime;
-    activeTimer += deltaTime;
+    timer += DELTA_TIME;
+    activeTimer += DELTA_TIME;
     if (activeTimer >= activeTime) {
       activeTimer = 0;
       active();
@@ -57,12 +57,13 @@ class TimeWatcher {
 }
 
 
-class ActionView extends View with TimeWatcher {
-  final Role role;
+class ActionView extends View {
+
+  final Action action;
   Clock timerClock = new Clock();
 
-  ActionView(this.role) {
-    timerClock.max = activeTime;
+  ActionView(this.action) {
+    timerClock.max = action.activeTime;
   }
 
   init() {
@@ -74,11 +75,10 @@ class ActionView extends View with TimeWatcher {
     add(timerClock);
 
     timerClock.add(new Label()
-      ..text = role.name
+      ..text = action.name
       ..style.overflow = 'hidden');
 
-    //TODO bind
-    timerClock.min = activeTimer;
+    timerClock.watch('min', action, 'activeTimer');
   }
 }
 
@@ -88,7 +88,10 @@ class Action extends Model with TimeWatcher {
   String name = "action";
   final Map<ActionActive, Fomula> actives = {
   };
-  ActionHost _owner = null;
+
+  //Role role;
+
+  //ActionHost _owner = null;
 
   Action() {
 
@@ -98,47 +101,49 @@ class Action extends Model with TimeWatcher {
   @override
   void active() {
     for (var a in actives.keys) {
-      a(_owner, actives[a]());
+      a(actives[a]());
     }
   }
 }
 
-typedef void ActionActive<T> (T caster, num value);
+typedef void ActionActive (num value);
 
-void AttackFirstMonster(Role caster, num value) {
+typedef Action ActionCreator<T> (T value);
+
+void AttackFirstMonster(num value) {
   var monster = getFirstMonster();
   if (monster == null)return;
 
-  monster.HP -= value * caster.damage;
+  monster.HP -= value;
   //print("attack!${monster.HP}");
 }
 
-void AttackAllMonster(Role caster, num value) {
+void AttackAllMonster(num value) {
   var monsters = getAllMonster();
   if (monsters == null)return;
 
   monsters.forEach((m) {
-    m.HP -= value * caster.damage;
+    m.HP -= value;
     //print("attack!${monster.HP}");
   });
 
 }
 
-Action Attack() {
+Action Attack(Role role) {
   Action attack = new Action();
   attack
     ..name = "普通攻擊"
   //    ..maxTime = 3000
   //    ..effect = 5
     ..actives[AttackFirstMonster] = () {
-    return attack.effect * attack.level;
+    return attack.effect * attack.level * role.damage;
   };
   //state.attach(target);
   return attack;
 }
 
 
-Action AttackAll() {
+Action AttackAll(Role role) {
   Action attack = new Action();
   attack
     ..name = "全部攻擊"
@@ -146,7 +151,7 @@ Action AttackAll() {
   //    ..maxTime = 3000
   //    ..effect = 5
     ..actives[AttackAllMonster] = () {
-    return attack.effect * attack.level;
+    return attack.effect * attack.level * role.damage;
   };
   //state.attach(target);
   return attack;

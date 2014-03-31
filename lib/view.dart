@@ -8,6 +8,8 @@ import 'dart:html';
 import 'dart:async';
 import 'dart:math';
 
+//import 'model.dart';
+
 part 'binging.dart';
 //
 ////import 'dart:mirrors';
@@ -227,11 +229,12 @@ class View {
 
   void sendMsg(String msg, data) {
     handleMsg(msg, data);
-    children.forEach((c) => c.handleMsg(msg, data));
+    children.forEach((View c) => c.sendMsg(msg, data));
+
   }
 
   void handleMsg(String msg, data) {
-
+    //print("here");
   }
 
   //  void expandWidth(){
@@ -308,29 +311,33 @@ class View {
     }
 
 
-    //children.forEach((c) => c.updateView());
+    children.forEach((c) => c.updateView());
   }
 
+  void init() {
+
+  }
 
   void add(View entity) {
-    addChild(entity);
-  }
-
-  void addChild(View entity) {
+    entity.init();
     _children.add(entity);
     entity._parent = this;
     _element.children.add(entity._element);
   }
 
-  void remove(View entity) {
-    removeChild(entity);
-  }
+  //  void addChild(View entity) {
+  //
+  //  }
 
-  void removeChild(View entity) {
+  void remove(View entity) {
     _children.remove(entity);
     entity._parent = null;
     _element.children.remove(entity._element);
   }
+
+  //  void removeChild(View entity) {
+  //
+  //  }
 
   void breakLine() {
     element.children.add(new DivElement()
@@ -354,7 +361,7 @@ class View {
     parent.add(this);
   }
 
-  void watch(String field, View source, String sourceField, {bool twoWay:false, bindingTransformFunc transform}) {
+  void watch(String field, source, String sourceField, {bool twoWay:false, bindingTransformFunc transform}) {
     binding(source, sourceField, this, field, twoWay:twoWay, transform:transform);
   }
 
@@ -509,7 +516,7 @@ class Bar extends View {
     //classes.add('border');
     minBar.style.backgroundColor = 'red';
 
-    addChild(minBar);
+    add(minBar);
   }
 
   @override
@@ -536,6 +543,7 @@ class Clock extends View {
     if (_min > max) _min = max;
     if (_min < 0) _min = 0;
     minBar.height = (1 - _min / max) * height;
+    //print("here");
   }
 
   //  @override
@@ -556,7 +564,7 @@ class Clock extends View {
     minBar.style.bottom = '0px';
     minBar.style.zIndex = "1000";
     minBar.style.overflow = 'hidden';
-    addChild(minBar);
+    add(minBar);
   }
 
   @override
@@ -674,23 +682,20 @@ class LayerPanel extends View {
 
   void addPanel(View panel) {
     _panels.add(panel);
-
     panel.watchSize(this);
-
-    //_panels.add(panel);
-
-    //setPanel(panel);
+    add(panel);
+    print(panel);
   }
 
-  setPanel(View panel) {
+  showPanel(View panel) {
     _panels.forEach((p) {
       p.visible = false;
     });
     panel.visible = true;
   }
 
-  setPanelID(int id) {
-    setPanel(_panels[id]);
+  showPanelID(int id) {
+    showPanel(_panels[id]);
   }
 }
 
@@ -722,24 +727,24 @@ class TabPanel extends View {
 
     //    tab.onClick.listen()
     tab.onClick.listen((e) {
-      setPanel(panel);
+      showPanel(panel);
     });
 
     tabs.add(tab);
     panels.add(panel);
 
-    setPanel(panel);
+    showPanel(panel);
   }
 
-  setPanel(View panel) {
+  showPanel(View panel) {
     _panelID.forEach((p) {
       p.visible = false;
     });
     panel.visible = true;
   }
 
-  setPanelID(int id) {
-    setPanel(_panelID[id]);
+  showPanelID(int id) {
+    showPanel(_panelID[id]);
   }
 
 }

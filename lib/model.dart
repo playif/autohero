@@ -1,4 +1,6 @@
-library model;
+//part of model;
+
+
 
 class Model {
   bool _die;

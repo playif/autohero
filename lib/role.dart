@@ -1,40 +1,39 @@
 part of model;
 
-class Upgrade extends View {
-  String name;
-  String desc;
+class BattleRolePanel extends View {
+  @override
+  void handleMsg(String msg, data) {
+    if (msg == ADD_ROLE) {
+      RoleView view = new RoleView(data);
+      add(view);
+
+    }
+
+  }
+
 }
-
-Map<Creator<Upgrade>, int> upgradeProb = {
-    up1:10
-};
-Dict<Upgrade> UpgradeDict = new Dict<Upgrade>(upgradeProb, [up1, up2]);
-
-Upgrade up1() {
-  Upgrade up = new Upgrade()
-    ..name = "H1";
-
-  return up;
-}
-
-Upgrade up2() {
-  Upgrade up = new Upgrade()
-    ..name = "H2";
-
-  return up;
-}
-
 
 class RoleView extends View {
   final Role role;
 
 
   final View actionPanel = new View();
+  final View weaponPanel = new View();
+
   Bar expBar = new Bar();
   Label levelLabel = new Label();
   Label damageLabel = new Label();
 
   RoleView(this.role);
+
+  @override
+  void handleMsg(String msg, data) {
+    if (msg == ADD_ROLE_ACTION) {
+      ActionView view = new ActionView(data[0]);
+      actionPanel.add(view);
+    }
+
+  }
 
   void init() {
     width = 200;
@@ -46,25 +45,28 @@ class RoleView extends View {
       ..text = role.name);
 
     levelLabel = new Label()
-      ..text = "等級:${role.level}"
+      ..name = "等級: "
       ..classes.add("small-text");
+
+    levelLabel.watch('text', role, 'level');
+
     add(levelLabel);
 
     add(damageLabel
-      ..text = "傷害:${role.damage}"
+      ..name = "傷害: "
       ..classes.add("small-text"));
-
+    damageLabel.watch('text', role, 'damage');
 
     add(actionPanel);
-    add(itemPanel);
+    add(weaponPanel);
 
 
     add(expBar);
     expBar.width = 188;
     expBar.height = 5;
     expBar.color = 0;
-    expBar.max = role.MXP;
-    expBar.min = role.XP;
+    expBar.watch('max', role, 'MXP');
+    expBar.watch('min', role, 'XP');
 
     width = 190;
     //    classes.add('box');
@@ -80,9 +82,11 @@ class RoleView extends View {
 class Role extends Model {
 
   final List<Action> actions = [];
-  final List<Item> items = [];
+  final List<Weapon> weapons = [];
 
   List<Upgrade> upgrades = [];
+
+  List<ActionCreator<Role>> bindedActions = [];
 
   num level = 1;
 
@@ -92,8 +96,6 @@ class Role extends Model {
   num MXP = 20;
 
   num XP = 0;
-
-
 
 
   @override
@@ -144,7 +146,7 @@ Role Worrier() {
   role
     ..name = "戰士"
     ..damage = 4
-    ..actions.add(Attack());
+    ..bindedActions.add(Attack);
 
   return role;
 }
@@ -156,7 +158,7 @@ Role Mage() {
     ..damage = 2
 
   //  addRoleAction(AttackAll());
-    ..actions.add(AttackAll());
+    ..bindedActions.add(AttackAll);
 
   return role;
 }

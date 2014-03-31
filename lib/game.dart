@@ -1,4 +1,5 @@
 library model;
+
 import 'dart:html';
 import 'dart:async';
 import 'dart:math';
@@ -12,21 +13,45 @@ part 'item.dart';
 part 'monster.dart';
 part 'team.dart';
 part 'role.dart';
-
+part 'upgrade.dart';
 
 part 'site.dart';
 part 'state.dart';
 part 'dict.dart';
 
-//Game game;
 
+const DELTA_TIME = 100;
 
+//game model
+final GameModel game = new GameModel();
+
+class GameModel extends Model {
+  int money = 0;
+  Site _currentSite = StartLand();
+}
+//top level array
 final List<Role> roles = [];
 final List<Item> inventoryItems = [];
 final List<Model> entities = [];
 final List<Monster> monsters = [];
 final List<Site> sites = [StartLand(), StartLand2()];
-Site _currentSite = StartLand();
+
+
+//views
+final View root = new View();
+final View menuPanel = new View();
+final View contentPanel = new View();
+
+final View battlePanel = new View();
+final View sitePanel = new View();
+final View siteInfoPanel = new View();
+final ItemPanel itemPanel = new ItemPanel();
+final LayerPanel mainPanel = new LayerPanel();
+final BattleRolePanel battleRolePanel = new BattleRolePanel();
+final BattleMonsterPanel battleMonsterPanel = new BattleMonsterPanel();
+final TeamPanel teamPanel = new TeamPanel();
+final GameInfoPanel infoPanel = new GameInfoPanel();
+
 
 const String ROLE = 'role';
 const String ITEM = 'item';
@@ -35,17 +60,36 @@ const String REMOVE_ROLE = 'removeRole';
 const String ADD_MONSTER = 'addMonster';
 const String REMOVE_MONSTER = 'removeMonster';
 const String ADD_INVENTORY_ITEM = 'addInventoryItem';
-
+const String ADD_ROLE_ACTION = 'addRoleAction';
+const String REMOVE_ROLE_ACTION = 'removeRoleAction';
 const String EQUIP = 'equip';
 
 void addRole(Role role) {
   roles.add(role);
   root.sendMsg(ADD_ROLE, role);
+
+  role.bindedActions.forEach((ActionCreator<Role> a) {
+    addRoleAction(a(role), role);
+  });
+
 }
 
 void removeRole(Role role) {
   roles.remove(role);
   root.sendMsg(REMOVE_ROLE, role);
+}
+
+//void addRoleAction(Action action, Role role) {
+//  role.actions.add(action);
+//  setRoleAction(action,role);
+//  //root.sendMsg(ADD_ROLE_ACTION, [action, role]);
+//}
+
+void addRoleAction(Action action, Role role) {
+
+  role.actions.add(action);
+  //  action.role=role;
+  root.sendMsg(ADD_ROLE_ACTION, [action, role]);
 }
 
 void addMonster(Monster monster) {
@@ -86,27 +130,13 @@ void setSite(Site site) {
   //siteInfoPanel.updateView();
   //_currentSite
 
-  _currentSite = site;
+  game._currentSite = site;
 
   //site.init();
   //sites.add(site);
   //sitePanel.addChild(role);
 }
 
-
-//views
-final View root = new View();
-final View menuPanel = new View();
-final View contentPanel = new View();
-final View monsterPanel = new View();
-final View battlePanel = new View();
-final View sitePanel = new View();
-final View siteInfoPanel = new View();
-final View itemPanel = new View();
-final LayerPanel mainPanel = new LayerPanel();
-
-final View rolePanel = new View();
-final TeamPanel teamPanel = new TeamPanel();
 
 //bindBodyPanel(View panel) {
 //  panel.watchSize(mainPanel);
@@ -120,33 +150,35 @@ init() {
   mainPanel.watch('height', contentPanel, 'height');
 
   mainPanel.addPanel(battlePanel);
-  mainPanel.addPanel(itemPanel);
+  //
   mainPanel.addPanel(sitePanel);
   mainPanel.addPanel(teamPanel);
-  teamPanel.init();
+
+  mainPanel.addPanel(itemPanel);
+  //  teamPanel.init();
 
   itemPanel.vertical = false;
   itemPanel.wrap = true;
 
   battlePanel.vertical = false;
-  battlePanel.add(rolePanel);
-  battlePanel.add(monsterPanel);
+  battlePanel.add(battleRolePanel);
+  battlePanel.add(battleMonsterPanel);
 
-  rolePanel.width = 200;
-  rolePanel.watch('height', mainPanel, 'height');
+  battleRolePanel.width = 200;
+  battleRolePanel.watch('height', mainPanel, 'height');
 
-  monsterPanel.watch('height', mainPanel, 'height');
-  monsterPanel.watch('width', mainPanel, 'width', transform:(s) => s - rolePanel.width);
-  monsterPanel.cellMargin = 5;
-  monsterPanel.vertical = false;
-  monsterPanel.wrap = true;
+  battleMonsterPanel.watch('height', mainPanel, 'height');
+  battleMonsterPanel.watch('width', mainPanel, 'width', transform:(s) => s - battleRolePanel.width);
+  battleMonsterPanel.cellMargin = 5;
+  battleMonsterPanel.vertical = false;
+  battleMonsterPanel.wrap = true;
 
   menuPanel.height = 70;
   menuPanel.watch('width', root, 'width');
   menuPanel.cellMargin = 15;
   menuPanel.vertical = false;
 
-  infoPanel.init();
+
   infoPanel.watch('height', contentPanel, 'height');
   infoPanel.width = 200;
   siteInfoPanel.height = 200;
@@ -171,8 +203,8 @@ init() {
   //    var moneyLabel = ;
 
 
-  sites.forEach((s) {
-    s.init();
+  sites.forEach((Site s) {
+    //s.init();
     SiteButton siteButton = new SiteButton(s);
 
     siteButton.init();
@@ -203,29 +235,37 @@ void sendMsg(String msg, data) {
   root.sendMsg(msg, data);
 }
 
-void start([Duration dt = const Duration(milliseconds: 100)]) {
+void start([Duration dt = const Duration(milliseconds: DELTA_TIME)]) {
   init();
   document.body.children.add(root.element);
-  _dt = dt.inMilliseconds;
+  //  _dt = dt.inMilliseconds;
   Timer timer = new Timer.periodic(dt, _update);
+
+  game._currentSite.setLevel(1);
 }
 
 void _update(Timer timer) {
-
-
   if (monsters.length == 0) {
-    var max = rand.nextInt(_currentSite.maxMonster);
+    var max = rand.nextInt(game._currentSite.maxMonster);
     for (int i = 0;i < max;i++) {
       addMonster(createMonster());
+      //print("m");
     }
-    _currentSite.progress();
+    game._currentSite.progress();
   }
 
-  entities.remove((e) => e.die);
+  //entities.remove((Model e) => e.die);
+  //entities.forEach((Model e) => e.update());
 
-  entities.forEach((e) => e.update());
+  roles.forEach((Role r) {
+    r.actions.forEach((Action a) {
+      a.update();
+    });
+  });
+
 
   checkBindings();
+  root.updateView();
   //_updateEntities(this);
 }
 
@@ -233,17 +273,17 @@ void _update(Timer timer) {
 //class ItemHost {
 
 
-_addItem(Item item) {
-  //  item.init();
-  //    items.add(item);
-  //    itemPanel.addChild(item);
-}
-
-_removeItem(Item item) {
-  //    items.remove(item);
-  //    itemPanel.removeChild(item);
-  //owner.removeChild(action);
-}
+//_addItem(Item item) {
+//  //  item.init();
+//  //    items.add(item);
+//  //    itemPanel.addChild(item);
+//}
+//
+//_removeItem(Item item) {
+//  //    items.remove(item);
+//  //    itemPanel.removeChild(item);
+//  //owner.removeChild(action);
+//}
 //}
 //
 //void _updateEntities(View entity) {
@@ -300,24 +340,20 @@ _removeItem(Item item) {
 
 
 //class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
-num _dt;
+//num _dt;
 
-num get deltaTime => _dt;
 
-Map<String, int> _items = new Map<String, int>();
+//Map<String, int> _items = new Map<String, int>();
 
 //  Map<String, int> get items => _items;
 
 
-int money = 0;
+//int money = 0;
 
 //int get money => _money;
-int _research = 0;
+//int _research = 0;
 
-int get research => _research;
-
-
-View currentPanel;
+//int get research => _research;
 
 
 //  Entity itemPanel = new Entity();
@@ -327,8 +363,6 @@ View currentPanel;
 //Game() {
 //  game = this;
 //}
-
-final GameInfoPanel infoPanel = new GameInfoPanel();
 
 
 //  updateView() {
@@ -340,14 +374,7 @@ final GameInfoPanel infoPanel = new GameInfoPanel();
 
 
 void showPanel(View panel) {
-  mainPanel.children.forEach((p) {
-    p.visible = false;
-  });
-
-  panel.visible = true;
-  //    panel.height = height - 140;
-  currentPanel = panel;
-  //  updateView();
+  mainPanel.showPanel(panel);
 }
 
 
@@ -363,20 +390,20 @@ Monster getFirstMonster() {
 
 List<Monster> getAllMonster() {
   if (monsters.length > 0) {
-    return monsters.where((m) => !m.die);
+    return monsters.where((m) => !m.die).toList();
   } else return null;
 }
 
-void _addMonster(Monster monster) {
-  //  monster.init();
-  monsters.add(monster);
-  //  monsterPanel.addChild(monster);
-}
-
-void _removeMonster(Monster monster) {
-  monsters.remove(monster);
-  //  monsterPanel.removeChild(monster);
-}
+//void _addMonster(Monster monster) {
+//  //  monster.init();
+//  monsters.add(monster);
+//  //  monsterPanel.addChild(monster);
+//}
+//
+//void _removeMonster(Monster monster) {
+//  monsters.remove(monster);
+//  //  monsterPanel.removeChild(monster);
+//}
 
 
 void obtainExp(num xp) {
@@ -390,7 +417,7 @@ void obtainExp(num xp) {
 }
 
 void obtainMoney(num money) {
-  money += money;
+  game.money += money;
 }
 
 //void obtainLoot(Item item) {
@@ -398,7 +425,7 @@ void obtainMoney(num money) {
 //}
 
 Monster createMonster() {
-  return _currentSite.createMonster();
+  return game._currentSite.createMonster();
 }
 
 

@@ -4,7 +4,26 @@ part of model;
 道具有分裝備品、消耗品、和收藏品。
 
 */
+class ItemPanel extends View {
 
+  ItemPanel() {
+    border = 1;
+  }
+
+  Map<Item, View> views = {
+  };
+
+  @override
+  void handleMsg(String msg, data) {
+    if (msg == ADD_INVENTORY_ITEM) {
+      ItemView view = new ItemView(data);
+      add(view);
+      views[data] = view;
+      print(data);
+    }
+
+  }
+}
 
 class ItemView extends View {
 

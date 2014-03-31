@@ -45,13 +45,13 @@ class StateHost {
     } else {
       state.attach(this);
       states.add(state);
-      statePanel.addChild(state);
+      statePanel.add(state);
     }
   }
 
   _removeState(State state) {
     states.remove(state);
-    statePanel.removeChild(state);
+    statePanel.remove(state);
   }
 
 
@@ -97,8 +97,6 @@ class State extends Model with TimeWatcher {
   State() {
 
   }
-
-
 
 
   //bool isTemp = true;

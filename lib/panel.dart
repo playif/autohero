@@ -1,8 +1,7 @@
 part of model;
 
 class GameInfoPanel extends View {
-  GameInfoPanel() {
-  }
+
 
   init() {
     border = 0;

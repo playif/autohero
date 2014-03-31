@@ -1,7 +1,7 @@
 part of view;
 
 class _Binding {
-  View source;
+  Model source;
   Symbol sourceField;
   View target;
   Symbol targetField;
@@ -17,7 +17,7 @@ class _Binding {
 
 typedef bindingTransformFunc(s);
 
-void binding(View source, String sourceField, View target, String targetField, {bool twoWay:false, bindingTransformFunc transform}) {
+void binding(source, String sourceField, View target, String targetField, {bool twoWay:false, bindingTransformFunc transform}) {
   //if (targetField == null)targetField = sourceField;
   //reflect(sourceField).type.owner.
   var cv = reflect(source).getField(new Symbol(sourceField)).reflectee;
@@ -27,7 +27,7 @@ void binding(View source, String sourceField, View target, String targetField, {
 }
 
 void checkBindings() {
-  _Binding.bindings.removeWhere((s) => s.source.die || s.target.die);
+  _Binding.bindings.removeWhere((s) => s.target.die);
   _Binding.bindings.forEach((binding) {
     var cv = reflect(binding.source).getField(binding.sourceField).reflectee;
     if (binding.currentValue != cv) {
