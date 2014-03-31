@@ -13,8 +13,13 @@ Dict<int> monsterBuffNumber = new Dict<int>(MonsterBuffNumber, [0, 1, 2]);
 typedef num ProgressFunc();
 
 
-class SiteButton extends GameEntity {
-  Site site;
+class SiteButton extends View {
+
+
+  final Site site;
+
+  SiteButton(this.site);
+
 
   void init() {
     width = 100;
@@ -25,45 +30,20 @@ class SiteButton extends GameEntity {
       ..text = site.name);
 
     onClick.listen((s) {
-      game.setSite(site);
+      setSite(site);
     });
   }
 
 }
 
-class Site extends GameEntity {
-  int level = 1;
+class SiteView extends View {
+  final Site site;
+  final View panel = new View();
+  final Select select = new Select();
+  final Bar progressBar = new Bar();
+  final Label levelLabel = new Label();
 
-  //  int get level => _level;
-  //
-  //  void set level(int lv) {
-  //    _level = lv;
-  //    levelLabel
-  //      ..text = "等級:${_level}";
-  //  }
-
-  Label levelLabel = new Label();
-  int maxLevel = 3;
-  int currentMaxLevel = 1;
-  ProgressFunc levelFunc;
-  int monsterLevel = 1;
-
-  String name = "Site";
-
-  ProgressFunc progressFunc;
-  num maxProgress;
-  num currentProgress = 0;
-
-  Dict<Creator<Monster>> monsters;
-  Dict<MonsterBuff> monsterBuffs;
-
-  num maxMonster = 3;
-
-  View panel = new View();
-
-  Select select = new Select();
-
-  Bar progressBar = new Bar();
+  SiteView(this.site);
 
   void init() {
     width = 200;
@@ -75,7 +55,7 @@ class Site extends GameEntity {
 
     panel.add(new Label()
       ..name = '場地: '
-      ..text = this.name);
+      ..text = site.name);
 
     levelLabel
       ..size = 20;
@@ -83,10 +63,10 @@ class Site extends GameEntity {
     levelLabel.watch('text', this, 'level');
     panel.add(levelLabel);
 
-    setLevel(1);
+    site.setLevel(1);
 
 
-    select.createOption("level $level", "$level");
+    select.createOption("level ${site.level}", "${site.level}");
     //select.width=200;
     //    select.createOption("level 1", "1");
     //    select.createOption("level 2", "2");
@@ -94,9 +74,9 @@ class Site extends GameEntity {
     panel.add(select);
 
     select.onChange.listen((s) {
-      game.removeAllMonsters();
+      removeAllMonsters();
 
-      setLevel(select.selectedIndex + 1);
+      site.setLevel(select.selectedIndex + 1);
     });
     select.height = 40;
 
@@ -141,6 +121,36 @@ class Site extends GameEntity {
 
 
   }
+}
+
+class Site extends GameEntity {
+  int level = 1;
+
+  //  int get level => _level;
+  //
+  //  void set level(int lv) {
+  //    _level = lv;
+  //    levelLabel
+  //      ..text = "等級:${_level}";
+  //  }
+
+  Label levelLabel = new Label();
+  int maxLevel = 3;
+  int currentMaxLevel = 1;
+  ProgressFunc levelFunc;
+  int monsterLevel = 1;
+
+  String name = "Site";
+
+  ProgressFunc progressFunc;
+  num maxProgress;
+  num currentProgress = 0;
+
+  Dict<Creator<Monster>> monsters;
+  Dict<MonsterBuff> monsterBuffs;
+
+  num maxMonster = 3;
+
 
   Monster createMonster() {
     Monster monster = monsters.pick()();
@@ -164,7 +174,7 @@ class Site extends GameEntity {
   void setLevel(int lv) {
     //    if (level >= maxLevel)return;
     level = lv;
-    select.selectedIndex = level - 1;
+    //    select.selectedIndex = level - 1;
     currentProgress = 0;
     maxProgress = progressFunc();
   }
@@ -174,7 +184,7 @@ class Site extends GameEntity {
     level += 1;
 
     if (currentMaxLevel < level) {
-      select.createOption("level $level", "$level");
+      //      select.createOption("level $level", "$level");
       currentMaxLevel = level;
     }
     setLevel(level);

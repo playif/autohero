@@ -7,7 +7,6 @@ import 'package:autohero/game.dart';
 //import 'ui.dart';
 
 
-
 class MyGame extends Game {
 
   Button createMenuButton(String name, View show) {
@@ -29,7 +28,7 @@ class MyGame extends Game {
 
   @override
   init() {
-
+    super.init();
     //print(window.innerHeight);
     //document.body.style.height = '${window.screen.height}';
     //document.body.style.maxHeight = '${window.screen.height}';
@@ -39,8 +38,8 @@ class MyGame extends Game {
 
     //panel.add(new Entity());
 
-    createMenuButton("戰鬥",battlePanel);
-    createMenuButton("隊伍", sitePanel);
+    createMenuButton("戰鬥", battlePanel);
+    createMenuButton("隊伍", teamPanel);
     createMenuButton("地圖", sitePanel);
     createMenuButton("道具", itemPanel);
     createMenuButton("研究", itemPanel);
@@ -84,20 +83,9 @@ class MyGame extends Game {
     //createMonster(panel2,mon);
 
     var r = Worrier();
-
-    var action = Attack();
-
-    r.add(action);
+    var r2 = Mage();
 
     add(r);
-
-    var r2 = Worrier();
-
-    var action2 = Attack();
-
-    //r2.add(action2);
-    //r2.add(AttackAll());
-
     add(r2);
 
 
@@ -121,7 +109,5 @@ class MyGame extends Game {
 
 
 void main() {
-  //initView();
-  game = new MyGame();
-  game.start();
+  new MyGame().start();
 }

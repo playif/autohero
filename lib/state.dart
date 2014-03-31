@@ -57,7 +57,25 @@ class StateHost {
 
 }
 
-class State extends GameEntity with Updatable, TimeWatcher {
+class StateView extends View {
+  final State state;
+
+  StateView(this.state);
+
+  init() {
+    //    timerClock.width = 50;
+    //    timerClock.height = 50;
+
+    add(state.timerClock);
+
+    timerClock.add(new Label()
+      ..text = this.name);
+
+
+  }
+}
+
+class State extends GameEntity with TimeWatcher {
   String name = "";
   num effect = 1;
   StateHost _target;
@@ -81,17 +99,7 @@ class State extends GameEntity with Updatable, TimeWatcher {
   }
 
 
-  init() {
-    //    timerClock.width = 50;
-    //    timerClock.height = 50;
 
-    add(timerClock);
-
-    timerClock.add(new Label()
-      ..text = this.name);
-
-
-  }
 
   //bool isTemp = true;
 

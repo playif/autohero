@@ -25,10 +25,62 @@ Upgrade up2() {
 }
 
 
-class Role extends GameEntity with StateHost, ActionHost, ItemHost {
+class RoleView extends View {
+  final Role role;
 
 
-  //  List<Item> items = [];
+  final View actionPanel = new View();
+  Bar expBar = new Bar();
+  Label levelLabel = new Label();
+  Label damageLabel = new Label();
+
+  RoleView(this.role);
+
+  void init() {
+    width = 200;
+    height = 150;
+    actionPanel.height = 20;
+    actionPanel.watch('width', this, 'width');
+    actionPanel.style.overflow = 'hidden';
+    add(new Label()
+      ..text = role.name);
+
+    levelLabel = new Label()
+      ..text = "等級:${role.level}"
+      ..classes.add("small-text");
+    add(levelLabel);
+
+    add(damageLabel
+      ..text = "傷害:${role.damage}"
+      ..classes.add("small-text"));
+
+
+    add(actionPanel);
+    add(itemPanel);
+
+
+    add(expBar);
+    expBar.width = 188;
+    expBar.height = 5;
+    expBar.color = 0;
+    expBar.max = role.MXP;
+    expBar.min = role.XP;
+
+    width = 190;
+    //    classes.add('box');
+    //    classes.add('vbox');
+    //    classes.add('border');
+    //    classes.add('small-margin');
+
+    border = 1;
+    borderColorH = 0;
+  }
+}
+
+class Role extends GameEntity {
+
+  final List<Action> actions = [];
+  final List<Item> items = [];
 
   List<Upgrade> upgrades = [];
 
@@ -41,49 +93,8 @@ class Role extends GameEntity with StateHost, ActionHost, ItemHost {
 
   num XP = 0;
 
-  Bar expBar = new Bar();
-  Label levelLabel = new Label();
-  Label damageLabel = new Label();
-
-  void init() {
-    width = 200;
-    height = 150;
-    actionPanel.height = 20;
-    actionPanel.watch('width', this, 'width');
-    actionPanel.style.overflow = 'hidden';
-    add(new Label()
-      ..text = this.name);
-
-    levelLabel = new Label()
-      ..text = "等級:${level}"
-      ..classes.add("small-text");
-    add(levelLabel);
-
-    add(damageLabel
-      ..text = "傷害:${damage}"
-      ..classes.add("small-text"));
 
 
-    add(actionPanel);
-    add(itemPanel);
-
-
-    add(expBar);
-    expBar.width = 188;
-    expBar.height = 5;
-    expBar.color = 0;
-    expBar.max = MXP;
-    expBar.min = XP;
-
-    width = 190;
-    //    classes.add('box');
-    //    classes.add('vbox');
-    //    classes.add('border');
-    //    classes.add('small-margin');
-
-    border = 1;
-    borderColorH = 0;
-  }
 
   @override
   void update() {
@@ -96,16 +107,16 @@ class Role extends GameEntity with StateHost, ActionHost, ItemHost {
     if (XP >= MXP) {
       XP = 0;
       level += 1;
-      levelLabel
-        ..text = "等級:${level}";
+      //      levelLabel
+      //        ..text = "等級:${level}";
       MXP += level * level * 2;
       damage += 1;
-      damageLabel
-        ..text = "傷害:${damage}";
+      //      damageLabel
+      //        ..text = "傷害:${damage}";
     }
 
-    expBar.max = MXP;
-    expBar.min = XP;
+    //    expBar.max = MXP;
+    //    expBar.min = XP;
 
   }
 
@@ -132,8 +143,20 @@ Role Worrier() {
   Role role = new Role();
   role
     ..name = "戰士"
-    ..damage = 4;
+    ..damage = 4
+    ..actions.add(Attack());
 
   return role;
 }
 
+Role Mage() {
+  Role role = new Role();
+  role
+    ..name = "法師"
+    ..damage = 2
+
+  //  addRoleAction(AttackAll());
+    ..actions.add(AttackAll());
+
+  return role;
+}

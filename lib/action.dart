@@ -12,23 +12,22 @@ class Component extends GameEntity {
 }
 
 class ActionHost {
-  List<Action> actions = [];
-  final View actionPanel = new View();
 
-  _addAction(Action action) {
-    action.init(this);
-    actionPanel.addChild(action);
-  }
 
-  _removeAction(Action action) {
-    actionPanel.removeChild(action);
-    //owner.removeChild(action);
-  }
+  //  _addAction(Action action) {
+  //    action.init(this);
+  //    actionPanel.addChild(action);
+  //  }
+  //
+  //  _removeAction(Action action) {
+  //    actionPanel.removeChild(action);
+  //    //owner.removeChild(action);
+  //  }
 }
 
 
 class TimeWatcher {
-  Clock timerClock = new Clock();
+
   num maxTime = 0;
   num timer = 0;
   num activeTime = 1000;
@@ -36,9 +35,9 @@ class TimeWatcher {
 
 
   void update() {
-    timerClock.max = activeTime;
-    timer += game.deltaTime;
-    activeTimer += game.deltaTime;
+
+    timer += deltaTime;
+    activeTimer += deltaTime;
     if (activeTimer >= activeTime) {
       activeTimer = 0;
       active();
@@ -47,7 +46,7 @@ class TimeWatcher {
     if (maxTime != 0 && timer >= maxTime) {
       timeUp();
     }
-    timerClock.min = activeTimer;
+
   }
 
   void active() {
@@ -57,7 +56,33 @@ class TimeWatcher {
   }
 }
 
-class Action extends GameEntity with Updatable, TimeWatcher {
+
+class ActionView extends View with TimeWatcher {
+  final Role role;
+  Clock timerClock = new Clock();
+
+  ActionView(this.role) {
+    timerClock.max = activeTime;
+  }
+
+  init() {
+    style.overflow = 'hidden';
+    width = 20;
+    height = 20;
+
+    timerClock.width = 20;
+    add(timerClock);
+
+    timerClock.add(new Label()
+      ..text = role.name
+      ..style.overflow = 'hidden');
+
+    //TODO bind
+    timerClock.min = activeTimer;
+  }
+}
+
+class Action extends GameEntity with TimeWatcher {
   int level = 1;
   num effect = 1;
   String name = "action";
@@ -69,19 +94,7 @@ class Action extends GameEntity with Updatable, TimeWatcher {
 
   }
 
-  init(ActionHost owner) {
-    style.overflow = 'hidden';
-    width = 20;
-    height = 20;
-    _owner = owner;
-    timerClock.width = 20;
-    add(timerClock);
 
-    timerClock.add(new Label()
-      ..text = this.name
-      ..style.overflow = 'hidden');
-
-  }
 
   @override
   void active() {
@@ -94,7 +107,7 @@ class Action extends GameEntity with Updatable, TimeWatcher {
 typedef void ActionActive<T> (T caster, num value);
 
 void AttackFirstMonster(Role caster, num value) {
-  var monster = game.getFirstMonster();
+  var monster = getFirstMonster();
   if (monster == null)return;
 
   monster.HP -= value * caster.damage;
@@ -102,7 +115,7 @@ void AttackFirstMonster(Role caster, num value) {
 }
 
 void AttackAllMonster(Role caster, num value) {
-  var monsters = game.getAllMonster();
+  var monsters = getAllMonster();
   if (monsters == null)return;
 
   monsters.forEach((m) {

@@ -1,8 +1,71 @@
 part of model;
 
-const Sym_HP = const Symbol('HP');
+//const Sym_HP = const Symbol('HP');
 
-class Monster extends GameEntity with StateHost, ActionHost {
+class MonsterView extends View {
+
+  final Monster monster;
+
+  final Bar HPBar = new Bar();
+  final Label HPLabel = new Label();
+  final View actionPanel = new View();
+  final View statePanel = new View();
+
+
+  MonsterView(this.monster);
+
+
+  void init() {
+    width = 200;
+    height = 100;
+
+    monster.MHP *= monster.level;
+    monster.XP *= monster.level;
+    monster._HP = monster.MHP;
+    add(new Label()
+      ..text = monster.name);
+
+    breakLine();
+
+    add(new Label()
+      ..text = "等級:${monster.level}"
+      ..classes.add("small-text"));
+
+    breakLine();
+
+    HPLabel.classes.add("small-text");
+    HPLabel.name = "生命: ";
+
+    //bf(this,HP,HPLabel,HPLabel.text);
+    binding(this, 'HP', HPLabel, 'text');
+    add(HPLabel);
+
+
+    HPBar.width = 200;
+    HPBar.height = 5;
+    HPBar.color = 0;
+    HPBar.max = monster.MHP;
+    binding(this, 'HP', HPBar, 'min');
+    add(HPBar);
+
+
+    add(statePanel);
+    add(actionPanel);
+
+    border = 1;
+
+    onClick.listen((e) {
+      monster.HP -= 100;
+    });
+
+
+    //HPLabel.text = "生命:$_HP";
+    //HPBar.min = _HP;
+    //    this.height=200;
+  }
+}
+
+class Monster extends GameEntity {
   String name = "monster";
   num _HP = 10;
 
@@ -19,59 +82,11 @@ class Monster extends GameEntity with StateHost, ActionHost {
 
   int level = 1;
 
-  Bar HPBar = new Bar();
-  Label HPLabel = new Label();
+  final List<State> states = [];
 
   Dict<Creator<Item>> loot;
 
-  void init() {
-    width = 200;
-    //height = 100;
 
-    MHP *= level;
-    XP *= level;
-    _HP = MHP;
-    add(new Label()
-      ..text = this.name);
-
-    breakLine();
-
-    add(new Label()
-      ..text = "等級:${level}"
-      ..classes.add("small-text"));
-
-    breakLine();
-
-    HPLabel.classes.add("small-text");
-    HPLabel.name = "生命: ";
-
-    //bf(this,HP,HPLabel,HPLabel.text);
-    binding(this, 'HP', HPLabel, 'text');
-    add(HPLabel);
-
-
-    HPBar.width = 200;
-    HPBar.height = 5;
-    HPBar.color = 0;
-    HPBar.max = MHP;
-    binding(this, 'HP', HPBar, 'min');
-    add(HPBar);
-
-
-    add(statePanel);
-    add(actionPanel);
-
-    border = 1;
-
-    onClick.listen((e) {
-      HP -= 100;
-    });
-
-
-    //HPLabel.text = "生命:$_HP";
-    //HPBar.min = _HP;
-    //    this.height=200;
-  }
 
   //  @override
   //  void update() {
@@ -103,9 +118,9 @@ class Monster extends GameEntity with StateHost, ActionHost {
     if (_HP <= 0) {
       _HP = 0;
 
-      game.obtainExp(XP);
-      game.obtainMoney(money);
-      game.obtainLoot(loot.pick()());
+      obtainExp(XP);
+      obtainMoney(money);
+      obtainLoot(loot.pick()());
 
       leave();
     }

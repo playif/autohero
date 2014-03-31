@@ -9,77 +9,77 @@ import 'dart:async';
 import 'dart:math';
 
 part 'binging.dart';
-
-//import 'dart:mirrors';
-abstract class Updatable {
-  void update();
-}
-
-View _root = new View();
-
-initView() {
-  _resetWindowSize();
-  window.onResize.listen((e) {
-    _resetWindowSize();
-    //    updateView();
-  });
-
-  //document.body.children.add(_root.element);
-  //  document.body.style.height=windowHeight;
-}
-
-class _ViewPort {
-  num _windowHeight = window.innerHeight;
-
-  num get windowHeight => _windowHeight;
-
-  num _windowWidth = window.innerHeight;
-
-  num get windowWidth => _windowWidth;
-}
-
-View viewPort = new View();
-
-_resetWindowSize() {
-  viewPort.height = window.innerHeight;
-  viewPort.width = window.innerWidth;
-  document.body.style.height = '${viewPort.height}';
-  document.body.style.maxHeight = '${viewPort.width}';
-}
-
-
-//updateView() {
-//  _update(_root);
+//
+////import 'dart:mirrors';
+//abstract class Updatable {
+//  void update();
 //}
-
-_update(View view) {
-  view.children.removeWhere((c) => c.die);
-
-  //view.updateView();
-
-  view.children.forEach((c) => _update(c));
-}
-
-class GameView extends View {
-  init() {
-
-  }
-
-
-  List<View> getViews() {
-    return [new View()];
-  }
-
-  updateView() {
-    var views = getViews();
-    views.forEach((v) {
-      if (!children.contains(v)) {
-        children.add(v);
-      }
-    });
-
-  }
-}
+//
+//View _root = new View();
+//
+//initView() {
+//  _resetWindowSize();
+//  window.onResize.listen((e) {
+//    _resetWindowSize();
+//    //    updateView();
+//  });
+//
+//  //document.body.children.add(_root.element);
+//  //  document.body.style.height=windowHeight;
+//}
+//
+//class _ViewPort {
+//  num _windowHeight = window.innerHeight;
+//
+//  num get windowHeight => _windowHeight;
+//
+//  num _windowWidth = window.innerHeight;
+//
+//  num get windowWidth => _windowWidth;
+//}
+//
+//View viewPort = new View();
+//
+//_resetWindowSize() {
+//  viewPort.height = window.innerHeight;
+//  viewPort.width = window.innerWidth;
+//  document.body.style.height = '${viewPort.height}';
+//  document.body.style.maxHeight = '${viewPort.width}';
+//}
+//
+//
+////updateView() {
+////  _update(_root);
+////}
+//
+//_update(View view) {
+//  view.children.removeWhere((c) => c.die);
+//
+//  //view.updateView();
+//
+//  view.children.forEach((c) => _update(c));
+//}
+//
+//class GameView extends View {
+//  init() {
+//
+//  }
+//
+//
+//  List<View> getViews() {
+//    return [new View()];
+//  }
+//
+//  updateView() {
+//    var views = getViews();
+//    views.forEach((v) {
+//      if (!children.contains(v)) {
+//        children.add(v);
+//      }
+//    });
+//
+//  }
+//}
 
 class View {
   dynamic observable;
@@ -225,6 +225,15 @@ class View {
     //left=0;
   }
 
+  void sendMsg(String msg, data) {
+    handleMsg(msg, data);
+    children.forEach((c) => c.handleMsg(msg, data));
+  }
+
+  void handleMsg(String msg, data) {
+
+  }
+
   //  void expandWidth(){
   //    watch('width',entityParent,'width');
   //  }
@@ -264,7 +273,16 @@ class View {
       num cy = 0;
       if (vertical) {
         children.forEach((View v) {
-          if (v.height == 0)v.height = v.element.getBoundingClientRect().height;
+          //var rect=v.element.getComputedStyle();
+
+          //          if (v.height == 0) {
+          //
+          //            //var rect=v.element.getComputedStyle();
+          //
+          //            //v.height = rect.height;
+          //            print(v.element.getClientRects()[0]);
+          //          }
+          //print(rect.height);
           if (!v.visible)return;
           if (wrap && cy + v.height >= height) {
             cy = 0;
@@ -338,6 +356,11 @@ class View {
 
   void watch(String field, View source, String sourceField, {bool twoWay:false, bindingTransformFunc transform}) {
     binding(source, sourceField, this, field, twoWay:twoWay, transform:transform);
+  }
+
+  void watchSize(View panel) {
+    watch('width', panel, 'width');
+    watch('height', panel, 'height');
   }
 
   CssStyleDeclaration get style => _element.style;
@@ -645,6 +668,81 @@ class Select extends View {
 //      ..style.clear = "both");
 //  }
 //}
+
+class LayerPanel extends View {
+  final List<View> _panels = [];
+
+  void addPanel(View panel) {
+    _panels.add(panel);
+
+    panel.watchSize(this);
+
+    //_panels.add(panel);
+
+    //setPanel(panel);
+  }
+
+  setPanel(View panel) {
+    _panels.forEach((p) {
+      p.visible = false;
+    });
+    panel.visible = true;
+  }
+
+  setPanelID(int id) {
+    setPanel(_panels[id]);
+  }
+}
+
+class TabPanel extends View {
+  final List<View> _panelID = [];
+  final Map<View, View> _panels = {
+  };
+
+  View tabs = new View();
+  View panels = new View();
+
+  int tabWidth = 150;
+
+  void init() {
+    vertical = false;
+    add(tabs);
+    add(panels);
+
+    tabs.width = tabWidth;
+    tabs.watch('height', this, 'height');
+    panels.watch('width', this, 'width', transform:(s) => s - tabWidth);
+    panels.watch('height', this, 'height');
+  }
+
+  void addPanel(View tab, View panel) {
+
+    _panels[tab] = panel;
+    _panelID.add(panel);
+
+    //    tab.onClick.listen()
+    tab.onClick.listen((e) {
+      setPanel(panel);
+    });
+
+    tabs.add(tab);
+    panels.add(panel);
+
+    setPanel(panel);
+  }
+
+  setPanel(View panel) {
+    _panelID.forEach((p) {
+      p.visible = false;
+    });
+    panel.visible = true;
+  }
+
+  setPanelID(int id) {
+    setPanel(_panelID[id]);
+  }
+
+}
 
 class Scene extends View with Updatable {
   Scene();

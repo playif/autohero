@@ -5,23 +5,33 @@ part of model;
 
 */
 
-class ItemHost {
-  List<Item> items = [];
-  final View itemPanel = new View();
 
-  _addItem(Item item) {
-    item.init();
-    items.add(item);
-    itemPanel.addChild(item);
-  }
+class ItemView extends View {
 
-  _removeItem(Item item) {
-    items.remove(item);
-    itemPanel.removeChild(item);
-    //owner.removeChild(action);
+  final Item item;
+
+  ItemView(this.item);
+
+  init() {
+    width = 100;
+    height = 100;
+    border = 1;
+
+    add(text(item.name));
+
   }
+/* TODO for con
+  @override
+  init() {
+    super.init();
+
+    onClick.listen((e) {
+      print("hi");
+    });
+
+
+  }*/
 }
-
 
 class Item extends GameEntity {
   String name = "item";
@@ -32,14 +42,7 @@ class Item extends GameEntity {
   //  Effect onUse = null;
 
 
-  init() {
-    width = 100;
-    height = 100;
-    border = 1;
 
-    add(text(name));
-
-  }
 
 }
 
@@ -224,16 +227,7 @@ class Consumable extends Item {
 
   //Effect onUse = null;
 
-  @override
-  init() {
-    super.init();
 
-    onClick.listen((e) {
-      print("hi");
-    });
-
-
-  }
 }
 
 
