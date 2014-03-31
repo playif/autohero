@@ -1,3 +1,8 @@
-htmlib
+Auto Hero
 ======
-alpha1
+A HTML game made by dartlang
+
+TODO:
+* Character upgrade
+* Item randomize
+* Story
