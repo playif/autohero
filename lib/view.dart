@@ -460,6 +460,7 @@ class Bar extends View {
   num _min = 10;
 
   num get min => _min;
+
   set min(num val) {
     _min = val;
     if (_min > max) _min = max;
