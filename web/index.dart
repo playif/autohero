@@ -2,8 +2,8 @@ import 'dart:html';
 import 'dart:math';
 import 'dart:async';
 
-import 'package:htmlib/view.dart';
-import 'package:htmlib/game.dart';
+import 'package:autohero/view.dart';
+import 'package:autohero/game.dart';
 //import 'ui.dart';
 
 
@@ -43,8 +43,9 @@ class MyGame extends Game {
     createMenuButton("隊伍", sitePanel);
     createMenuButton("地圖", sitePanel);
     createMenuButton("道具", itemPanel);
+    createMenuButton("研究", itemPanel);
     createMenuButton("日記", itemPanel);
-
+    createMenuButton("系統", itemPanel);
     //    var l2 = new Button();
     //    l2.text = "中文2";
     //    l2.width=100;

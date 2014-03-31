@@ -25,6 +25,9 @@ class ItemHost {
 
 class Item extends GameEntity {
   String name = "item";
+  bool stack = true;
+  int price = 0;
+
 
   //  Effect onUse = null;
 

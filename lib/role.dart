@@ -99,7 +99,7 @@ class Role extends GameEntity with StateHost, ActionHost, ItemHost {
       levelLabel
         ..text = "等級:${level}";
       MXP += level * level * 2;
-      damage += 2;
+      damage += 1;
       damageLabel
         ..text = "傷害:${damage}";
     }

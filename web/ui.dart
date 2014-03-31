@@ -1,5 +1,5 @@
-import 'package:htmlib/htmlib.dart';
-import 'package:htmlib/game.dart';
+import 'package:autohero/autohero.dart';
+import 'package:autohero/game.dart';
 import 'dart:math';
 
 
