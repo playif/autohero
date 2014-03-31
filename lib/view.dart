@@ -264,6 +264,7 @@ class View {
       num cy = 0;
       if (vertical) {
         children.forEach((View v) {
+          if (v.height == 0)v.height = v.element.getBoundingClientRect().height;
           if (!v.visible)return;
           if (wrap && cy + v.height >= height) {
             cy = 0;
@@ -311,6 +312,12 @@ class View {
     _children.remove(entity);
     entity._parent = null;
     _element.children.remove(entity._element);
+  }
+
+  void breakLine() {
+    element.children.add(new DivElement()
+      ..style.clear = "both");
+    //add(new LineBreaker());
   }
 
   //  void _leave() {
@@ -631,6 +638,13 @@ class Select extends View {
   }
 
 }
+
+//class LineBreaker extends View {
+//  LineBreaker() {
+//    element.children.add(new DivElement()
+//      ..style.clear = "both");
+//  }
+//}
 
 class Scene extends View with Updatable {
   Scene();

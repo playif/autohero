@@ -26,16 +26,21 @@ class Monster extends GameEntity with StateHost, ActionHost {
 
   void init() {
     width = 200;
-    height = 100;
+    //height = 100;
 
     MHP *= level;
     XP *= level;
     _HP = MHP;
     add(new Label()
       ..text = this.name);
+
+    breakLine();
+
     add(new Label()
       ..text = "等級:${level}"
       ..classes.add("small-text"));
+
+    breakLine();
 
     HPLabel.classes.add("small-text");
     HPLabel.name = "生命: ";

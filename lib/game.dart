@@ -10,6 +10,7 @@ part 'item.dart';
 part 'monster.dart';
 part 'team.dart';
 part 'role.dart';
+part 'infoPanel.dart';
 
 part 'site.dart';
 part 'state.dart';
@@ -219,16 +220,6 @@ abstract class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
     //    setSite(StartLand());
     //    var moneyLabel = ;
 
-    infoPanel.border = 0;
-
-    infoPanel.add(new Label()
-      ..text = '資訊版面');
-
-    infoPanel.add(new Label()
-      ..name = "金幣: "
-      ..watch('text', this, 'money', transform:(m) {
-      return "<b>$m</b>";
-    }));
 
 
     sites.forEach((s) {
