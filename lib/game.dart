@@ -27,14 +27,14 @@ final GameModel game = new GameModel();
 
 class GameModel extends Model {
   int money = 0;
-  Site _currentSite = StartLand();
+  Site currentSite;
 }
 //top level array
 final List<Role> roles = [];
 final List<Item> inventoryItems = [];
 final List<Model> entities = [];
 final List<Monster> monsters = [];
-final List<Site> sites = [StartLand(), StartLand2()];
+final List<Site> sites = [];
 
 
 //views
@@ -43,7 +43,7 @@ final View menuPanel = new View();
 final View contentPanel = new View();
 
 final View battlePanel = new View();
-final View sitePanel = new View();
+final SitePanel sitePanel = new SitePanel();
 final View siteInfoPanel = new View();
 final ItemPanel itemPanel = new ItemPanel();
 final LayerPanel mainPanel = new LayerPanel();
@@ -62,6 +62,10 @@ const String REMOVE_MONSTER = 'removeMonster';
 const String ADD_INVENTORY_ITEM = 'addInventoryItem';
 const String ADD_ROLE_ACTION = 'addRoleAction';
 const String REMOVE_ROLE_ACTION = 'removeRoleAction';
+const String ADD_SITE = 'addSite';
+const String REMOVE_SITE = 'removeSite';
+
+
 const String EQUIP = 'equip';
 
 void addRole(Role role) {
@@ -102,6 +106,16 @@ void removeMonster(Monster monster) {
   root.sendMsg(REMOVE_MONSTER, monster);
 }
 
+void addSite(Site site) {
+  sites.add(site);
+  root.sendMsg(ADD_SITE, site);
+}
+
+void removeSite(Site site) {
+  sites.remove(site);
+  root.sendMsg(REMOVE_SITE, site);
+}
+
 void addInventoryItem(Item item) {
   inventoryItems.add(item);
   root.sendMsg(ADD_INVENTORY_ITEM, item);
@@ -123,18 +137,11 @@ void unequipItem(Item item, Role role) {
 }
 
 void setSite(Site site) {
-  //  siteInfoPanel.remove(currentSite);
-  //    site.updateView();
-  //  siteInfoPanel.add(site);
-  //    checkBindings();
-  //siteInfoPanel.updateView();
-  //_currentSite
+  siteInfoPanel.removeAll();
 
-  game._currentSite = site;
+  siteInfoPanel.add(new SiteView(site));
 
-  //site.init();
-  //sites.add(site);
-  //sitePanel.addChild(role);
+  game.currentSite = site;
 }
 
 
@@ -150,15 +157,11 @@ init() {
   mainPanel.watch('height', contentPanel, 'height');
 
   mainPanel.addPanel(battlePanel);
-  //
   mainPanel.addPanel(sitePanel);
   mainPanel.addPanel(teamPanel);
-
   mainPanel.addPanel(itemPanel);
   //  teamPanel.init();
 
-  itemPanel.vertical = false;
-  itemPanel.wrap = true;
 
   battlePanel.vertical = false;
   battlePanel.add(battleRolePanel);
@@ -183,7 +186,7 @@ init() {
   infoPanel.width = 200;
   siteInfoPanel.height = 200;
   siteInfoPanel.watch('width', infoPanel, 'width');
-  infoPanel.add(siteInfoPanel);
+
 
   contentPanel.watch('height', root, 'height', transform:(s) => s - 70);
   contentPanel.watch('width', root, 'width');
@@ -196,20 +199,24 @@ init() {
   contentPanel.add(infoPanel);
   contentPanel.add(mainPanel);
 
-
+  infoPanel.add(siteInfoPanel);
   showPanel(battlePanel);
 
   //    setSite(StartLand());
   //    var moneyLabel = ;
 
 
-  sites.forEach((Site s) {
-    //s.init();
-    SiteButton siteButton = new SiteButton(s);
+  //  sites.forEach((Site s) {
+  //    //s.init();
+  //    SiteButton siteButton = new SiteButton(s);
+  //
+  //    siteButton.init();
+  //    //    sitePanel.add(siteButton);
+  //  });
+  addSite(StartLand());
+  addSite(StartLand2());
 
-    siteButton.init();
-    //    sitePanel.add(siteButton);
-  });
+  //siteInfoPanel.add(new SiteView(sites[0]));
 
   setSite(sites[0]);
   //sitePanel.add()
@@ -241,17 +248,17 @@ void start([Duration dt = const Duration(milliseconds: DELTA_TIME)]) {
   //  _dt = dt.inMilliseconds;
   Timer timer = new Timer.periodic(dt, _update);
 
-  game._currentSite.setLevel(1);
+  game.currentSite.setLevel(1);
 }
 
 void _update(Timer timer) {
   if (monsters.length == 0) {
-    var max = rand.nextInt(game._currentSite.maxMonster);
+    var max = rand.nextInt(game.currentSite.maxMonster);
     for (int i = 0;i < max;i++) {
       addMonster(createMonster());
       //print("m");
     }
-    game._currentSite.progress();
+    game.currentSite.progress();
   }
 
   //entities.remove((Model e) => e.die);
@@ -425,7 +432,7 @@ void obtainMoney(num money) {
 //}
 
 Monster createMonster() {
-  return game._currentSite.createMonster();
+  return game.currentSite.createMonster();
 }
 
 

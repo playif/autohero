@@ -13,6 +13,29 @@ Dict<int> monsterBuffNumber = new Dict<int>(MonsterBuffNumber, [0, 1, 2]);
 typedef num ProgressFunc();
 
 
+class SitePanel extends View {
+
+  SitePanel() {
+    vertical = false;
+    cellMargin = 15;
+    //border = 1;
+  }
+
+  Map<Item, View> views = {
+  };
+
+  @override
+  void handleMsg(String msg, data) {
+    if (msg == ADD_SITE) {
+      SiteButton view = new SiteButton(data);
+      add(view);
+      views[data] = view;
+      print(data);
+    }
+
+  }
+}
+
 class SiteButton extends View {
 
 
@@ -60,10 +83,10 @@ class SiteView extends View {
     levelLabel
       ..size = 20;
     levelLabel.name = '等級: ';
-    levelLabel.watch('text', this, 'level');
+    levelLabel.watch('text', site, 'level');
     panel.add(levelLabel);
 
-    site.setLevel(1);
+    site.setLevel(site.currentMaxLevel);
 
 
     select.createOption("level ${site.level}", "${site.level}");
@@ -83,8 +106,8 @@ class SiteView extends View {
     progressBar.width = 180;
     progressBar.height = 10;
     //progressBar.borderColorH=50;
-    progressBar.watch('max', this, 'maxProgress');
-    progressBar.watch('min', this, 'currentProgress');
+    progressBar.watch('max', site, 'maxProgress');
+    progressBar.watch('min', site, 'currentProgress');
     panel.add(progressBar);
     //    SelectElement se = new SelectElement();
     //    OptionElement opt = new OptionElement();

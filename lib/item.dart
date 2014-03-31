@@ -7,7 +7,11 @@ part of model;
 class ItemPanel extends View {
 
   ItemPanel() {
-    border = 1;
+    vertical = false;
+
+    wrap = true;
+    cellMargin = 15;
+
   }
 
   Map<Item, View> views = {
@@ -19,7 +23,6 @@ class ItemPanel extends View {
       ItemView view = new ItemView(data);
       add(view);
       views[data] = view;
-      print(data);
     }
 
   }

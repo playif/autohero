@@ -22,6 +22,7 @@ void main() {
 
   //    var l2 = new Button();
 
+
   start();
 
   createMenuButton("戰鬥", battlePanel);

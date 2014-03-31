@@ -320,6 +320,7 @@ class View {
 
   void add(View entity) {
     entity.init();
+    entity.updateView();
     _children.add(entity);
     entity._parent = this;
     _element.children.add(entity._element);
@@ -333,6 +334,12 @@ class View {
     _children.remove(entity);
     entity._parent = null;
     _element.children.remove(entity._element);
+  }
+
+  void removeAll() {
+    _children.toList().forEach((c) {
+      remove(c);
+    });
   }
 
   //  void removeChild(View entity) {
@@ -684,7 +691,7 @@ class LayerPanel extends View {
     _panels.add(panel);
     panel.watchSize(this);
     add(panel);
-    print(panel);
+    //print(panel);
   }
 
   showPanel(View panel) {
