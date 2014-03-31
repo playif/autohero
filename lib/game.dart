@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'view.dart';
+import 'model.dart';
 
 part 'panel.dart';
 part 'action.dart';
@@ -22,26 +23,17 @@ part 'dict.dart';
 
 final List<Role> roles = [];
 final List<Item> inventoryItems = [];
-final List<GameEntity> entities = [];
+final List<Model> entities = [];
 final List<Monster> monsters = [];
 final List<Site> sites = [StartLand(), StartLand2()];
-//final List<Item> items = [];
-Site currentSite = StartLand();
-
-//int get siteLevel => currentSite.level;
-
+Site _currentSite = StartLand();
 
 const String ROLE = 'role';
 const String ITEM = 'item';
-
 const String ADD_ROLE = 'addRole';
-
-
 const String REMOVE_ROLE = 'removeRole';
-
 const String ADD_MONSTER = 'addMonster';
 const String REMOVE_MONSTER = 'removeMonster';
-
 const String ADD_INVENTORY_ITEM = 'addInventoryItem';
 
 const String EQUIP = 'equip';
@@ -94,7 +86,7 @@ void setSite(Site site) {
   //siteInfoPanel.updateView();
   //_currentSite
 
-  currentSite = site;
+  _currentSite = site;
 
   //site.init();
   //sites.add(site);
@@ -181,8 +173,8 @@ init() {
 
   sites.forEach((s) {
     s.init();
-    SiteButton siteButton = new SiteButton();
-    siteButton.site = s;
+    SiteButton siteButton = new SiteButton(s);
+
     siteButton.init();
     //    sitePanel.add(siteButton);
   });
@@ -222,11 +214,11 @@ void _update(Timer timer) {
 
 
   if (monsters.length == 0) {
-    var max = rand.nextInt(currentSite.maxMonster);
+    var max = rand.nextInt(_currentSite.maxMonster);
     for (int i = 0;i < max;i++) {
       addMonster(createMonster());
     }
-    currentSite.progress();
+    _currentSite.progress();
   }
 
   entities.remove((e) => e.die);
@@ -242,7 +234,7 @@ void _update(Timer timer) {
 
 
 _addItem(Item item) {
-  item.init();
+  //  item.init();
   //    items.add(item);
   //    itemPanel.addChild(item);
 }
@@ -274,72 +266,6 @@ _removeItem(Item item) {
 //  entity.updateView();
 //}
 
-class GameEntity {
-  bool _die;
-
-  bool get die => _die;
-
-
-  void update() {
-  }
-
-//
-//  @override
-//  add(View child) {
-//    if (child is State) {
-//      var me = this as StateHost;
-//      me._addState(child);
-//    } else if (child is Action) {
-//      var me = this as ActionHost;
-//      me._addAction(child);
-//    } else if (child is Monster) {
-//      var me = this as Game;
-//      me._addMonster(child);
-//    } else if (child is Role) {
-//      var me = this as RoleHost;
-//      me._addRole(child);
-//      me.teamPanel.addRole(child);
-//    } else if (child is Item) {
-//      var me = this as ItemHost;
-//      me._addItem(child);
-//    } else {
-//      super.addChild(child);
-//    }
-//  }
-//
-//
-//  @override
-//  remove(View child) {
-//
-//    if (child is State) {
-//      var me = this as StateHost;
-//      me._removeState(child);
-//    } else if (child is Action) {
-//      var me = this as ActionHost;
-//      me._removeAction(child);
-//    } else if (child is Monster) {
-//      var me = this as Game;
-//      me._removeMonster(child);
-//    } else if (child is Role) {
-//      var me = this as RoleHost;
-//      me._removeRole(child);
-//      me.teamPanel.removeRole(child);
-//    } else if (child is Item) {
-//      var me = this as ItemHost;
-//      me._removeItem(child);
-//    } else {
-//      super.removeChild(child);
-//    }
-//  }
-
-//  @override
-//  GameEntity get parent => getGameParent(this);
-
-//  GameEntity getGameParent(View entity) {
-//    if (entity.entityParent is GameEntity) return entity.entityParent;
-//    return getGameParent(entity.entityParent);
-//  }
-}
 
 //class RoleHost {
 
@@ -442,7 +368,7 @@ List<Monster> getAllMonster() {
 }
 
 void _addMonster(Monster monster) {
-  monster.init();
+  //  monster.init();
   monsters.add(monster);
   //  monsterPanel.addChild(monster);
 }
@@ -472,7 +398,7 @@ void obtainMoney(num money) {
 //}
 
 Monster createMonster() {
-  return currentSite.createMonster();
+  return _currentSite.createMonster();
 }
 
 

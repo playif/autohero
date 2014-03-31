@@ -7,8 +7,8 @@
 
 part of model;
 
-class Component extends GameEntity {
-  GameEntity host;
+class Component extends Model {
+  Model host;
 }
 
 class ActionHost {
@@ -82,7 +82,7 @@ class ActionView extends View with TimeWatcher {
   }
 }
 
-class Action extends GameEntity with TimeWatcher {
+class Action extends Model with TimeWatcher {
   int level = 1;
   num effect = 1;
   String name = "action";
@@ -93,7 +93,6 @@ class Action extends GameEntity with TimeWatcher {
   Action() {
 
   }
-
 
 
   @override

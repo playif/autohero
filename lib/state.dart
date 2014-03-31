@@ -75,7 +75,7 @@ class StateView extends View {
   }
 }
 
-class State extends GameEntity with TimeWatcher {
+class State extends Model with TimeWatcher {
   String name = "";
   num effect = 1;
   StateHost _target;

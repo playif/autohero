@@ -744,6 +744,6 @@ class TabPanel extends View {
 
 }
 
-class Scene extends View with Updatable {
+class Scene extends View {
   Scene();
 }

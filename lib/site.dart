@@ -123,7 +123,7 @@ class SiteView extends View {
   }
 }
 
-class Site extends GameEntity {
+class Site extends Model {
   int level = 1;
 
   //  int get level => _level;

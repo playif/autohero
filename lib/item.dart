@@ -33,15 +33,13 @@ class ItemView extends View {
   }*/
 }
 
-class Item extends GameEntity {
+class Item extends Model {
   String name = "item";
   bool stack = true;
   int price = 0;
 
 
-  //  Effect onUse = null;
-
-
+//  Effect onUse = null;
 
 
 }
@@ -225,7 +223,7 @@ class Consumable extends Item {
 
   }
 
-  //Effect onUse = null;
+//Effect onUse = null;
 
 
 }

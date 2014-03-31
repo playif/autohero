@@ -77,7 +77,7 @@ class RoleView extends View {
   }
 }
 
-class Role extends GameEntity {
+class Role extends Model {
 
   final List<Action> actions = [];
   final List<Item> items = [];

@@ -65,7 +65,7 @@ class MonsterView extends View {
   }
 }
 
-class Monster extends GameEntity {
+class Monster extends Model {
   String name = "monster";
   num _HP = 10;
 
