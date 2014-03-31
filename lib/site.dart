@@ -61,7 +61,8 @@ class SiteButton extends View {
 
 class SiteView extends View {
   final Site site;
-  final View panel = new View();
+
+  //final View panel = new View();
   final Select select = new Select();
   final Bar progressBar = new Bar();
   final Label levelLabel = new Label();
@@ -70,13 +71,13 @@ class SiteView extends View {
 
   void init() {
     width = 200;
-    height = 200;
+    height = 120;
     //panel.vertical = false;
-    panel.width = 200;
-    panel.height = 200;
-    add(panel);
+    //    panel.width = 200;
+    //    panel.height = 200;
+    //    add(panel);
 
-    panel.add(new Label()
+    add(new Label()
       ..name = '場地: '
       ..text = site.name);
 
@@ -84,7 +85,7 @@ class SiteView extends View {
       ..size = 20;
     levelLabel.name = '等級: ';
     levelLabel.watch('text', site, 'level');
-    panel.add(levelLabel);
+    add(levelLabel);
 
     site.setLevel(site.currentMaxLevel);
 
@@ -94,7 +95,7 @@ class SiteView extends View {
     //    select.createOption("level 1", "1");
     //    select.createOption("level 2", "2");
 
-    panel.add(select);
+    add(select);
 
     select.onChange.listen((s) {
       removeAllMonsters();
@@ -108,7 +109,7 @@ class SiteView extends View {
     //progressBar.borderColorH=50;
     progressBar.watch('max', site, 'maxProgress');
     progressBar.watch('min', site, 'currentProgress');
-    panel.add(progressBar);
+    add(progressBar);
     //    SelectElement se = new SelectElement();
     //    OptionElement opt = new OptionElement();
     //    opt.text = "test1";

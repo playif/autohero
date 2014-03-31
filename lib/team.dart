@@ -13,10 +13,10 @@ class TeamPanel extends TabPanel {
     if (msg == ADD_ROLE) {
       roles.add(data);
       RoleDetailPanel rdp = new RoleDetailPanel(data);
-      rdp.init();
       rdp.watchSize(panels);
       addPanel(new Label()
         ..text = data.name
+        ..size = 34
         ..border = 1, rdp);
     }
 
@@ -50,7 +50,7 @@ class RoleDetailPanel extends View {
     //super.init();
     add(new Label()
       ..text = role.name);
-
+    print(role.name);
     levelLabel
       ..name = '等級: '
       ..watch('text', role, 'level')

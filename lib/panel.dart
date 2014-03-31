@@ -7,7 +7,9 @@ class GameInfoPanel extends View {
     border = 0;
 
     add(new Label()
-      ..text = '資訊版面');
+      ..text = '資訊版面'
+      ..style.backgroundColor = 'gray'
+      ..size = 32);
     //infoPanel.breakLine();
     add(new Label()
       ..name = "金幣: "

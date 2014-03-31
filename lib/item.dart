@@ -41,6 +41,10 @@ class ItemView extends View {
 
     add(text(item.name));
 
+    onClick.listen((e) {
+      setToolTip(new Label()
+        ..text = item.name);
+    });
   }
 /* TODO for con
   @override

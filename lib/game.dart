@@ -45,6 +45,7 @@ final View contentPanel = new View();
 final View battlePanel = new View();
 final SitePanel sitePanel = new SitePanel();
 final View siteInfoPanel = new View();
+final View toolTipPanel = new View();
 final ItemPanel itemPanel = new ItemPanel();
 final LayerPanel mainPanel = new LayerPanel();
 final BattleRolePanel battleRolePanel = new BattleRolePanel();
@@ -136,6 +137,11 @@ void unequipItem(Item item, Role role) {
 
 }
 
+void setToolTip(View tip) {
+  toolTipPanel.removeAll();
+  toolTipPanel.add(tip);
+}
+
 void setSite(Site site) {
   siteInfoPanel.removeAll();
 
@@ -151,7 +157,11 @@ void setSite(Site site) {
 //}
 
 init() {
-
+  root.width = 960;
+  root.height = 540;
+  root.backgroundColorH = 0;
+  root.backgroundColorL = 10;
+  root.backgroundColorS = 10;
 
   mainPanel.watch('width', root, 'width', transform:(s) => s - 200);
   mainPanel.watch('height', contentPanel, 'height');
@@ -184,7 +194,7 @@ init() {
 
   infoPanel.watch('height', contentPanel, 'height');
   infoPanel.width = 200;
-  siteInfoPanel.height = 200;
+  siteInfoPanel.height = 120;
   siteInfoPanel.watch('width', infoPanel, 'width');
 
 
@@ -196,10 +206,15 @@ init() {
 
   root.add(menuPanel);
   root.add(contentPanel);
-  contentPanel.add(infoPanel);
-  contentPanel.add(mainPanel);
 
+  contentPanel.add(mainPanel);
+  contentPanel.add(infoPanel);
   infoPanel.add(siteInfoPanel);
+  infoPanel.add(toolTipPanel);
+
+  toolTipPanel.width = 200;
+  toolTipPanel.height = 270;
+
   showPanel(battlePanel);
 
   //    setSite(StartLand());
@@ -231,9 +246,10 @@ init() {
   });
 }
 
+
 _resetWindowSize() {
-  root.height = window.innerHeight;
-  root.width = window.innerWidth;
+  //  root.height = window.innerHeight;
+  //  root.width = window.innerWidth;
   //document.body.style.height = '${height}';
   //    document.body.style.maxHeight = '${width}';
 }

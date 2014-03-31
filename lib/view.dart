@@ -101,7 +101,10 @@ class View {
 
   bool get die => _die;
 
-  ElementStream<MouseEvent> get onClick => _element.onClick;
+  ElementStream get onClick {
+    //return _element.onTouchStart;
+    return _element.onClick;
+  }
 
 
   final List<View> _children = new List<View>();
@@ -195,6 +198,47 @@ class View {
 
   void _resetBorderColor() {
     _element.style.borderColor = 'hsla(${_borderColorH},${_borderColorS}%,${_borderColorL}%,${_borderColorA})';
+    //print('hsla(${_borderColorH},${_borderColorS}%,${_borderColorL}%,${_borderColorA})');
+  }
+
+  num _backgroundColorH = 0;
+
+  num get backgroundColorH => _backgroundColorH;
+
+  set backgroundColorH(num value) {
+    _backgroundColorH = value;
+    _resetBackgroundColor();
+  }
+
+  num _backgroundColorS = 100;
+
+  num get backgroundColorS => _backgroundColorS;
+
+  set backgroundColorS(num value) {
+    _backgroundColorS = value;
+    _resetBackgroundColor();
+  }
+
+  num _backgroundColorL = 50;
+
+  num get backgroundColorL => _backgroundColorL;
+
+  set backgroundColorL(num value) {
+    _backgroundColorL = value;
+    _resetBackgroundColor();
+  }
+
+  num _backgroundColorA = 1;
+
+  num get backgroundColorA => _backgroundColorA;
+
+  set backgroundColorA(num value) {
+    _backgroundColorA = value;
+    _resetBackgroundColor();
+  }
+
+  void _resetBackgroundColor() {
+    _element.style.backgroundColor = 'hsla(${_backgroundColorH},${_backgroundColorS}%,${_backgroundColorL}%,${_backgroundColorA})';
     //print('hsla(${_borderColorH},${_borderColorS}%,${_borderColorL}%,${_borderColorA})');
   }
 
