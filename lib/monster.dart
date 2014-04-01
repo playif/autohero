@@ -74,7 +74,7 @@ class MonsterView extends View {
     border = 1;
 
     onClick.listen((e) {
-      monster.HP -= 1;
+      monster.HP -= 1; 
     });
 
     classes.add('btn act-red');
