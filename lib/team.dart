@@ -5,7 +5,7 @@ class TeamPanel extends TabPanel {
   List<Role> roles = [];
 
   TeamPanel() {
-    tabs.cellMargin = 5;
+    tabs.cellMargin = 20;
   }
 
   @override

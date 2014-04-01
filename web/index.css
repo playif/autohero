@@ -85,3 +85,25 @@ select {
     /*-webkit-transition: all 0.1s;*/
     /*transition: all 0.1s;*/
 }
+
+.btn:not(:active) {
+    /* now keep red background for 1s */
+    -webkit-transition: background-color 1000ms ease;
+    transition: background-color 1000ms ease;
+}
+
+/*.btn:hover {*/
+/*background: red;*/
+/*}*/
+
+.btn.act-red:active {
+    background: red;
+}
+
+.btn.act-green:active {
+    background: green;
+}
+
+.btn {
+    cursor: pointer;
+}

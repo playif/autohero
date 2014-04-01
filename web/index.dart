@@ -9,8 +9,8 @@ import 'package:autohero/game.dart';
 Button createMenuButton(String name, View panel) {
   var l = new Button();
   l.text = name;
-  l.width = 120;
-  l.size = 40;
+  l.width = 116;
+  l.size = 26;
   menuPanel.add(l);
   l.onClick.listen((e) {
     showPanel(panel);
@@ -25,7 +25,7 @@ void main() {
 
   start();
 
-  createMenuButton("戰鬥", battlePanel);
+  createMenuButton("戰場", battlePanel);
   createMenuButton("隊伍", teamPanel);
   createMenuButton("地圖", sitePanel);
   createMenuButton("道具", itemPanel);

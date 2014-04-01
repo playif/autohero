@@ -182,7 +182,7 @@ init() {
 
   battleMonsterPanel.watch('height', mainPanel, 'height');
   battleMonsterPanel.watch('width', mainPanel, 'width', transform:(s) => s - battleRolePanel.width);
-  battleMonsterPanel.cellMargin = 5;
+  battleMonsterPanel.cellMargin = 15;
   battleMonsterPanel.vertical = false;
   battleMonsterPanel.wrap = true;
 

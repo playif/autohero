@@ -316,9 +316,10 @@ class View {
 */
 
     if (layout) {
-      num cx = 0;
-      num cy = 0;
+      num cx = cellMargin;
+      num cy = cellMargin;
       if (vertical) {
+
         children.forEach((View v) {
           //var rect=v.element.getComputedStyle();
 
@@ -332,7 +333,7 @@ class View {
           //print(rect.height);
           if (!v.visible)return;
           if (wrap && cy + v.height >= height) {
-            cy = 0;
+            cy = cellMargin;
             cx += cellWidth + v.border * 2 + cellMargin;
           }
           v.left = cx;
@@ -343,7 +344,7 @@ class View {
         children.forEach((View v) {
           if (!v.visible)return;
           if (wrap && cx + v.width >= width) {
-            cx = 0;
+            cx = cellMargin;
             cy += cellHeight + v.border * 2 + cellMargin;
           }
           v.left = cx;
@@ -646,6 +647,8 @@ class Button extends Label {
     style.borderStyle = 'solid';
     border = 2;
     borderColorH = 100;
+
+    classes.add('btn act-green');
   }
 
 //  @override

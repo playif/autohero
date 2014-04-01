@@ -74,9 +74,10 @@ class MonsterView extends View {
     border = 1;
 
     onClick.listen((e) {
-      monster.HP -= 100;
+      monster.HP -= 1;
     });
 
+    classes.add('btn act-red');
 
     //HPLabel.text = "生命:$_HP";
     //HPBar.min = _HP;

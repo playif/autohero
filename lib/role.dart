@@ -1,6 +1,11 @@
 part of model;
 
 class BattleRolePanel extends View {
+
+  BattleRolePanel() {
+    cellMargin = 15;
+  }
+
   @override
   void handleMsg(String msg, data) {
     if (msg == ADD_ROLE) {
@@ -36,7 +41,7 @@ class RoleView extends View {
   }
 
   void init() {
-    width = 200;
+    width = 180;
     height = 150;
     actionPanel.height = 20;
     actionPanel.watch('width', this, 'width');
@@ -68,7 +73,6 @@ class RoleView extends View {
     expBar.watch('max', role, 'MXP');
     expBar.watch('min', role, 'XP');
 
-    width = 190;
     //    classes.add('box');
     //    classes.add('vbox');
     //    classes.add('border');
