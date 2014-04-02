@@ -4,17 +4,18 @@ class BattleRolePanel extends View {
 
   BattleRolePanel() {
     cellMargin = 15;
+    bindList(roles, RoleView);
   }
 
-  @override
-  void handleMsg(String msg, data) {
-    if (msg == ADD_ROLE) {
-      RoleView view = new RoleView(data);
-      add(view);
-
-    }
-
-  }
+//  @override
+//  void handleMsg(String msg, data) {
+//    if (msg == ADD_ROLE) {
+//      RoleView view = new RoleView(data);
+//      add(view);
+//
+//    }
+//
+//  }
 
 
 }
@@ -48,43 +49,57 @@ class RoleView extends View {
   Map<Item, View> views = {
   };
 
-  @override
-  void handleMsg(String msg, data) {
-    //    Role role = data[1];
-    //    Weapon weapon = data[0];
-    if (msg == ADD_ROLE_WEAPON && data[1] == role) {
-      WeaponView view = new WeaponView(data[0]);
-      weaponPanel.insert(role.weapons.indexOf(data[0]), view);
-      views[data[0]] = view;
-    } else if (msg == REMOVE_ROLE_WEAPON && data[1] == role) {
-      //WeaponView view = new WeaponView(data[0]);
-      weaponPanel.remove(views[data[0]]);
-      views.remove(data[0]);
-    } else if (msg == ADD_ROLE_ACTION && data[1] == role) {
-      ActionView view = new ActionView(data[0]);
-      actionPanel.add(view);
-    }
-
-  }
+  //  @override
+  //  void handleMsg(String msg, data) {
+  //    //    Role role = data[1];
+  //    //    Weapon weapon = data[0];
+  //    if (msg == ADD_ROLE_WEAPON && data[1] == role) {
+  //      WeaponView view = new WeaponView(data[0]);
+  //      weaponPanel.insert(role.weapons.indexOf(data[0]), view);
+  //      views[data[0]] = view;
+  //    } else if (msg == REMOVE_ROLE_WEAPON && data[1] == role) {
+  //      //WeaponView view = new WeaponView(data[0]);
+  //      weaponPanel.remove(views[data[0]]);
+  //      views.remove(data[0]);
+  //    } else if (msg == ADD_ROLE_ACTION && data[1] == role) {
+  //      ActionView view = new ActionView(data[0]);
+  //      actionPanel.add(view);
+  //    }
+  //
+  //  }
 
   void init() {
+
     width = 180;
-    height = 150;
+    height = 90;
+
+    onClick.listen((e) {
+      var idx = roles.indexOf(role);
+      mainPanel.showPanel(teamPanel);
+      teamPanel.showPanelID(idx);
+    });
+
     actionPanel.height = 20;
     actionPanel.bindField('width', this, 'width');
     actionPanel.style.overflow = 'hidden';
     actionPanel.vertical = false;
 
+    weaponPanel.vertical = false;
+    weaponPanel.bindField('width', this, 'width');
+    weaponPanel.height = 52;
+    weaponPanel.cellMargin = 15;
+    weaponPanel.cellSize(50, 50);
+
     add(new Label()
       ..text = role.name);
 
-    levelLabel = new Label()
-      ..name = "等級: "
-      ..classes.add("small-text");
+    //    levelLabel = new Label()
+    //      ..name = "等級: "
+    //      ..classes.add("small-text");
 
-    levelLabel.bindField('text', role, 'level');
+    //    levelLabel.bindField('text', role, 'level');
 
-    add(levelLabel);
+    //    add(levelLabel);
 
     add(damageLabel
       ..name = "傷害: "
@@ -92,7 +107,7 @@ class RoleView extends View {
     damageLabel.bindField('text', role, 'damage');
 
     add(actionPanel);
-    add(weaponPanel);
+    //add(weaponPanel);
 
 
     add(expBar);
@@ -109,6 +124,10 @@ class RoleView extends View {
 
     border = 1;
     borderColorH = 0;
+
+
+    actionPanel.bindList(role.actions, ActionView);
+    //weaponPanel.bindList(role.weapons,WeaponView);
   }
 }
 
@@ -116,10 +135,9 @@ class Role extends Model {
 
   final List<Action> actions = [];
   final List<Weapon> weapons = [];
+  final List<Upgrade> upgrades = [];
 
-  List<Upgrade> upgrades = [];
-
-  List<ActionCreator<Role>> bindedActions = [];
+  //List<ActionCreator<Role>> bindedActions = [];
 
   num level = 1;
 
@@ -179,7 +197,7 @@ Role Worrier() {
   role
     ..name = "戰士"
     ..damage = 4
-    ..bindedActions.add(Attack);
+    ..actions.add(Attack(role));
 
   return role;
 }
@@ -191,7 +209,7 @@ Role Mage() {
     ..damage = 2
 
   //  addRoleAction(AttackAll());
-    ..bindedActions.add(AttackAll);
+    ..actions.add(AttackAll(role));
 
   return role;
 }

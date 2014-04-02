@@ -62,7 +62,8 @@ class View {
     _fieldBindings.add(binding);
   }
 
-  void checkListBinding() {
+  void checkListBinding([bool force=false]) {
+    if (!_visible && !force)return;
     if (_listBinding != null) {
       List tList;
       if (_listBinding.filter != null) {
@@ -103,10 +104,12 @@ class View {
       }
       cList.removeRange(tList.length, cList.length);
     }
+    children.forEach((View c) => c.checkListBinding());
   }
 
-
-  void checkFieldBindings() {
+  void checkFieldBindings([bool force=false]) {
+    children.forEach((View c) => c.checkFieldBindings());
+    if (!_visible && !force)return;
     _fieldBindings.forEach((binding) {
       var cv = reflect(binding.source).getField(binding.sourceField).reflectee;
       if (binding.currentValue != cv) {
@@ -118,8 +121,8 @@ class View {
         binding.currentValue = cv;
       }
     });
-  }
 
+  }
 
   dynamic observable;
 
@@ -169,6 +172,7 @@ class View {
     _element.style.minHeight = '${_height}px';
     _element.style.maxHeight = '${_height}px';
   }
+
 
   num _top = 0;
 
@@ -301,6 +305,7 @@ class View {
 
   set visible(bool value) {
     if (!_visible && value) {
+      updateView(true);
       onShow();
     }
     _visible = value;
@@ -314,62 +319,40 @@ class View {
 
   View() {
     _element.classes.add("view-node");
-    visible = true;
-    //top=0;
-    //left=0;
-  }
-
-  void sendMsg(String msg, data) {
-    handleMsg(msg, data);
-    children.forEach((View c) => c.sendMsg(msg, data));
-
-  }
-
-  void handleMsg(String msg, data) {
-    //print("here");
   }
 
   void onShow() {
 
   }
 
-  //  void expandWidth(){
-  //    watch('width',entityParent,'width');
-  //  }
 
   bool layoutCell = true;
   bool layout = true;
 
   bool vertical = true;
   bool wrap = false;
-  num cellWidth = 100;
-  num cellHeight = 100;
+  num cellWidth = 0;
+  num cellHeight = 0;
 
+  void cellSize(num width, num height) {
+    cellWidth = width;
+    cellHeight = height;
+  }
 
-  void updateView() {
-    checkFieldBindings();
-    checkListBinding();
-    children.forEach((c) => c.updateView());
-
+  void reArrange([bool force=false]) {
+    if (!_visible && !force)return;
+    children.forEach((View c) => c.reArrange());
     if (layoutCell) {
-      num cx = cellMargin + cellPadding;
-      num cy = cellMargin + cellPadding;
+      num cx = cellPadding;
+      num cy = cellPadding;
       if (vertical) {
 
         children.forEach((View v) {
-          //var rect=v.element.getComputedStyle();
-
-          //          if (v.height == 0) {
-          //
-          //            //var rect=v.element.getComputedStyle();
-          //
-          //            //v.height = rect.height;
-          //            print(v.element.getClientRects()[0]);
-          //          }
-          //print(rect.height);
           if (!v.visible || !v.layout)return;
+          if (cellWidth != 0) v.width = cellWidth;
+          if (cellHeight != 0) v.height = cellHeight;
           if (wrap && cy + v.height + v.border * 2 + cellMargin + cellPadding >= height) {
-            cy = cellMargin + cellPadding;
+            cy = cellPadding;
             cx += v.width + v.border * 2 + cellMargin;
           }
           v.left = cx;
@@ -379,8 +362,10 @@ class View {
       } else {
         children.forEach((View v) {
           if (!v.visible || !v.layout)return;
+          if (cellWidth != 0) v.width = cellWidth;
+          if (cellHeight != 0) v.height = cellHeight;
           if (wrap && cx + v.width + v.border * 2 + cellMargin + cellPadding >= width) {
-            cx = cellMargin + cellPadding;
+            cx = cellPadding;
             cy += v.height + v.border * 2 + cellMargin;
           }
           v.left = cx;
@@ -391,7 +376,12 @@ class View {
       }
     }
 
+  }
 
+  void updateView([bool force=false]) {
+    checkListBinding(force);
+    checkFieldBindings(force);
+    reArrange(force);
   }
 
   void init() {
@@ -399,21 +389,15 @@ class View {
   }
 
   void add(View entity) {
-    entity.init();
-    entity.updateView();
-    _children.add(entity);
-    entity._parent = this;
-    _element.children.add(entity._element);
-    //updateView();
+    insert(children.length, entity);
   }
 
   void insert(int index, View entity) {
+    _children.insert(index, entity);
+    _element.children.insert(index, entity._element);
+    entity._parent = this;
     entity.init();
     entity.updateView();
-    _children.insert(index, entity);
-    entity._parent = this;
-    _element.children.insert(index, entity._element);
-    //updateView();
   }
 
   void move(int from, int to) {
@@ -569,6 +553,8 @@ class Label extends View {
     _size = val;
     style.fontSize = '${_size}px';
     height = _size + 10;
+    style.overflowY = 'hidden';
+    //width=100;
   }
 
 
@@ -785,7 +771,9 @@ class LayerPanel extends View {
 
   void addPanel(View panel) {
     _panels.add(panel);
-    panel.watchSize(this);
+    //panel.watchSize(this);
+    panel.bindField('height', this, 'height', transform:(s) => s - cellPadding * 2);
+    panel.bindField('width', this, 'width', transform:(s) => s - cellPadding * 2);
     add(panel);
     //print(panel);
   }
@@ -803,12 +791,12 @@ class LayerPanel extends View {
 }
 
 class TabPanel extends View {
-  final List<View> _panelID = [];
-  final Map<View, View> _panels = {
-  };
+  //  final List<View> _panelID = [];
+  //  final Map<View, View> _panels = {
+  //  };
 
-  View tabs = new View();
-  View panels = new View();
+  final View tabs = new View();
+  final View panels = new View();
 
   int tabWidth = 150;
 
@@ -818,36 +806,44 @@ class TabPanel extends View {
     add(panels);
 
     tabs.width = tabWidth;
-    tabs.bindField('height', this, 'height');
-    panels.bindField('width', this, 'width', transform:(s) => s - tabWidth);
-    panels.bindField('height', this, 'height');
+    tabs.bindField('height', this, 'height', transform:(s) => s - cellMargin - cellPadding * 2);
+    panels.bindField('width', this, 'width', transform:(s) => s - tabWidth - cellMargin - cellPadding * 2);
+    panels.bindField('height', this, 'height', transform:(s) => s - cellMargin - cellPadding * 2);
   }
 
-  void addPanel(View tab, View panel) {
+  //  void addPanel(View tab, View panel) {
+  //
+  //    _panels[tab] = panel;
+  //    _panelID.add(panel);
+  //
+  //    //    tab.onClick.listen()
+  //    tab.onClick.listen((e) {
+  //      showPanel(panel);
+  //    });
+  //
+  //    tabs.add(tab);
+  //    panels.add(panel);
+  //
+  //    showPanel(panel);
+  //  }
 
-    _panels[tab] = panel;
-    _panelID.add(panel);
+  void removePanel(View tab) {
 
-    //    tab.onClick.listen()
-    tab.onClick.listen((e) {
-      showPanel(panel);
-    });
-
-    tabs.add(tab);
-    panels.add(panel);
-
-    showPanel(panel);
   }
 
   showPanel(View panel) {
-    _panelID.forEach((p) {
+    panels.children.forEach((p) {
       p.visible = false;
     });
     panel.visible = true;
   }
 
   showPanelID(int id) {
-    showPanel(_panelID[id]);
+    showPanel(panels.children[id]);
+  }
+
+  showPanelTab(View tab) {
+    showPanelID(tabs.children.indexOf(tab));
   }
 
 }

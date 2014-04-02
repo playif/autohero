@@ -4,21 +4,28 @@ part of model;
 
 class BattleMonsterPanel extends View {
 
-  Map<Monster, View> views = {
-  };
-
-  @override
-  void handleMsg(String msg, data) {
-    if (msg == ADD_MONSTER) {
-      MonsterView view = new MonsterView(data);
-      views[data] = view;
-      add(view);
-    } else if (msg == REMOVE_MONSTER) {
-      remove(views[data]);
-      views.remove(data);
-    }
-    //super.sendMsg(msg,data);
+  BattleMonsterPanel() {
+    cellMargin = 15;
+    vertical = false;
+    wrap = true;
+    bindList(monsters, MonsterView);
   }
+
+//  Map<Monster, View> views = {
+//  };
+
+//  @override
+//  void handleMsg(String msg, data) {
+//    if (msg == ADD_MONSTER) {
+//      MonsterView view = new MonsterView(data);
+//      views[data] = view;
+//      add(view);
+//    } else if (msg == REMOVE_MONSTER) {
+//      remove(views[data]);
+//      views.remove(data);
+//    }
+//    //super.sendMsg(msg,data);
+//  }
 }
 
 class MonsterView extends View {

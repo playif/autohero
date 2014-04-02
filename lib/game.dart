@@ -58,36 +58,36 @@ final TeamPanel teamPanel = new TeamPanel();
 final GameInfoPanel infoPanel = new GameInfoPanel();
 final WeaponSelectPanel weaponSelectPanel = new WeaponSelectPanel();
 
-const String ROLE = 'role';
-const String ITEM = 'item';
-const String ADD_ROLE = 'addRole';
-const String REMOVE_ROLE = 'removeRole';
-const String ADD_MONSTER = 'addMonster';
-const String REMOVE_MONSTER = 'removeMonster';
-const String ADD_INVENTORY_ITEM = 'addInventoryItem';
-const String REMOVE_INVENTORY_ITEM = 'removeInventoryItem';
-const String ADD_ROLE_ACTION = 'addRoleAction';
-const String REMOVE_ROLE_ACTION = 'removeRoleAction';
-const String ADD_SITE = 'addSite';
-const String REMOVE_SITE = 'removeSite';
-const String ADD_ROLE_WEAPON = 'addRoleWeapon';
-const String REMOVE_ROLE_WEAPON = 'removeRoleWeapon';
+//const String ROLE = 'role';
+//const String ITEM = 'item';
+//const String ADD_ROLE = 'addRole';
+//const String REMOVE_ROLE = 'removeRole';
+//const String ADD_MONSTER = 'addMonster';
+//const String REMOVE_MONSTER = 'removeMonster';
+//const String ADD_INVENTORY_ITEM = 'addInventoryItem';
+//const String REMOVE_INVENTORY_ITEM = 'removeInventoryItem';
+//const String ADD_ROLE_ACTION = 'addRoleAction';
+//const String REMOVE_ROLE_ACTION = 'removeRoleAction';
+//const String ADD_SITE = 'addSite';
+//const String REMOVE_SITE = 'removeSite';
+//const String ADD_ROLE_WEAPON = 'addRoleWeapon';
+//const String REMOVE_ROLE_WEAPON = 'removeRoleWeapon';
 
 const String EQUIP = 'equip';
 
 void addRole(Role role) {
   roles.add(role);
-  root.sendMsg(ADD_ROLE, role);
+  //  root.sendMsg(ADD_ROLE, role);
 
-  role.bindedActions.forEach((ActionCreator<Role> a) {
-    addRoleAction(a(role), role);
-  });
+  //  role.bindedActions.forEach((ActionCreator<Role> a) {
+  //    addRoleAction(a(role), role);
+  //  });
 
 }
 
 void removeRole(Role role) {
   roles.remove(role);
-  root.sendMsg(REMOVE_ROLE, role);
+  //  root.sendMsg(REMOVE_ROLE, role);
 }
 
 //void addRoleAction(Action action, Role role) {
@@ -98,58 +98,58 @@ void removeRole(Role role) {
 
 void addRoleAction(Action action, Role role) {
   role.actions.add(action);
-  root.sendMsg(ADD_ROLE_ACTION, [action, role]);
+  //  root.sendMsg(ADD_ROLE_ACTION, [action, role]);
 }
 
 void removeRoleAction(Action action, Role role) {
   role.actions.remove(action);
-  root.sendMsg(REMOVE_ROLE_ACTION, [action, role]);
+  //  root.sendMsg(REMOVE_ROLE_ACTION, [action, role]);
 }
 
 void addMonster(Monster monster) {
   monsters.add(monster);
-  root.sendMsg(ADD_MONSTER, monster);
+  //  root.sendMsg(ADD_MONSTER, monster);
 }
 
 void removeMonster(Monster monster) {
   monsters.remove(monster);
-  root.sendMsg(REMOVE_MONSTER, monster);
+  //  root.sendMsg(REMOVE_MONSTER, monster);
 }
 
 void addRoleWeapon(Weapon weapon, Role role, [int index=-1]) {
   if (index == -1) index = role.weapons.length;
-  print(index);
+  //  print(index);
   weapon.equip(role);
   role.weapons.insert(index, weapon);
-  root.sendMsg(ADD_ROLE_WEAPON, [weapon, role]);
+  //  root.sendMsg(ADD_ROLE_WEAPON, [weapon, role]);
 }
 
 void removeRoleWeapon(Weapon weapon, Role role) {
   weapon.unequip(role);
   role.weapons.remove(weapon);
-  root.sendMsg(REMOVE_ROLE_WEAPON, [weapon, role]);
+  //  root.sendMsg(REMOVE_ROLE_WEAPON, [weapon, role]);
 }
 
 void addSite(Site site) {
   sites.add(site);
-  root.sendMsg(ADD_SITE, site);
+  //  root.sendMsg(ADD_SITE, site);
 }
 
 void removeSite(Site site) {
   sites.remove(site);
-  root.sendMsg(REMOVE_SITE, site);
+  //  root.sendMsg(REMOVE_SITE, site);
 }
 
 void addInventoryItem(Item item) {
   //  if (index == -1) index = inventoryItems.length;
   //  print(index);
   inventoryItems.add(item);
-  root.sendMsg(ADD_INVENTORY_ITEM, item);
+  //  root.sendMsg(ADD_INVENTORY_ITEM, item);
 }
 
 void removeInventoryItem(Item item) {
   inventoryItems.remove(item);
-  root.sendMsg(REMOVE_INVENTORY_ITEM, item);
+  //  root.sendMsg(REMOVE_INVENTORY_ITEM, item);
 }
 
 String slotName = '空格';
@@ -212,6 +212,8 @@ init() {
   mainPanel.addPanel(sitePanel);
   mainPanel.addPanel(teamPanel);
   mainPanel.addPanel(itemPanel);
+  mainPanel.cellPadding = 15;
+
   //  teamPanel.init();
 
 
@@ -220,17 +222,16 @@ init() {
   battlePanel.add(battleMonsterPanel);
 
   battleRolePanel.width = 200;
-  battleRolePanel.bindField('height', mainPanel, 'height');
+  battleRolePanel.bindField('height', battlePanel, 'height');
 
-  battleMonsterPanel.bindField('height', mainPanel, 'height');
-  battleMonsterPanel.bindField('width', mainPanel, 'width', transform:(s) => s - battleRolePanel.width);
-  battleMonsterPanel.cellMargin = 15;
-  battleMonsterPanel.vertical = false;
-  battleMonsterPanel.wrap = true;
+  battleMonsterPanel.bindField('height', battlePanel, 'height');
+  battleMonsterPanel.bindField('width', battlePanel, 'width', transform:(s) => s - battleRolePanel.width);
+
 
   menuPanel.height = 70;
   menuPanel.bindField('width', root, 'width');
   menuPanel.cellMargin = 15;
+  menuPanel.cellPadding = 15;
   menuPanel.vertical = false;
 
 
@@ -296,17 +297,22 @@ _resetWindowSize() {
   //    document.body.style.maxHeight = '${width}';
 }
 
-void sendMsg(String msg, data) {
-  root.sendMsg(msg, data);
-}
+//void sendMsg(String msg, data) {
+//  root.sendMsg(msg, data);
+//}
 
 void start([Duration dt = const Duration(milliseconds: DELTA_TIME)]) {
+
   init();
+
   document.body.children.add(root.element);
+
   //  _dt = dt.inMilliseconds;
   Timer timer = new Timer.periodic(dt, _update);
 
   game.currentSite.setLevel(1);
+
+
 }
 
 void _update(Timer timer) {
@@ -314,13 +320,9 @@ void _update(Timer timer) {
     var max = rand.nextInt(game.currentSite.maxMonster);
     for (int i = 0;i < max;i++) {
       addMonster(createMonster());
-      //print("m");
     }
     game.currentSite.progress();
   }
-
-  //entities.remove((Model e) => e.die);
-  //entities.forEach((Model e) => e.update());
 
   roles.forEach((Role r) {
     r.actions.forEach((Action a) {
@@ -328,120 +330,12 @@ void _update(Timer timer) {
     });
   });
 
-
-  //checkBindings();
   root.updateView();
-  //_updateEntities(this);
 }
-
-
-//class ItemHost {
-
-
-//_addItem(Item item) {
-//  //  item.init();
-//  //    items.add(item);
-//  //    itemPanel.addChild(item);
-//}
-//
-//_removeItem(Item item) {
-//  //    items.remove(item);
-//  //    itemPanel.removeChild(item);
-//  //owner.removeChild(action);
-//}
-//}
-//
-//void _updateEntities(View entity) {
-//  for (int i = 0; i < entity.children.length; i++) {
-//    var e = entity.children[i];
-//    if (e.die) {
-//      if (e.parent == null) {
-//        throw new Exception('No parent!');
-//      } else {
-//        e.parent.remove(e);
-//      }
-//      i--;
-//      continue;
-//    }
-//    if (e is Updatable) {
-//      e.update();
-//    }
-//    _updateEntities(e);
-//  }
-//  entity.updateView();
-//}
-
-
-//class RoleHost {
-
-
-//void _addRole(Role role) {
-//  role.init();
-//  roles.add(role);
-////  rolePanel.addChild(role);
-//}
-//
-//void _removeRole(Role role) {
-//  roles.remove(role);
-////  rolePanel.removeChild(role);
-//}
-
-
-//}
-
-//class SiteHost {
-
-
-//set siteLevel(int level) {
-//  _currentSite.level = level;
-//}
-
-
-//  void _removeSite(Site site) {
-//    //roles.remove(role);
-//    //rolePanel.removeChild(role);
-//  }
-//}
-
-
-//class Game extends GameEntity with RoleHost, SiteHost, ItemHost {
-//num _dt;
-
-
-//Map<String, int> _items = new Map<String, int>();
-
-//  Map<String, int> get items => _items;
-
-
-//int money = 0;
-
-//int get money => _money;
-//int _research = 0;
-
-//int get research => _research;
-
-
-//  Entity itemPanel = new Entity();
-//View root = new View();
-
-
-//Game() {
-//  game = this;
-//}
-
-
-//  updateView() {
-//
-//
-//
-//    super.updateView();
-//  }
-
 
 void showPanel(View panel) {
   mainPanel.showPanel(panel);
 }
-
 
 void removeAllMonsters() {
   monsters.forEach((m) => m.leave());
@@ -459,18 +353,6 @@ List<Monster> getAllMonster() {
   } else return null;
 }
 
-//void _addMonster(Monster monster) {
-//  //  monster.init();
-//  monsters.add(monster);
-//  //  monsterPanel.addChild(monster);
-//}
-//
-//void _removeMonster(Monster monster) {
-//  monsters.remove(monster);
-//  //  monsterPanel.removeChild(monster);
-//}
-
-
 void obtainExp(num xp) {
   var n = roles.length;
   num rxp = xp / n;
@@ -485,13 +367,6 @@ void obtainMoney(num money) {
   game.money += money;
 }
 
-//void obtainLoot(Item item) {
-//  add(item);
-//}
-
 Monster createMonster() {
   return game.currentSite.createMonster();
 }
-
-
-//}

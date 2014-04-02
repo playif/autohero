@@ -19,21 +19,21 @@ class SitePanel extends View {
     vertical = false;
     cellMargin = 15;
     //border = 1;
+    bindList(sites, SiteButton);
   }
 
-  Map<Item, View> views = {
-  };
-
-  @override
-  void handleMsg(String msg, data) {
-    if (msg == ADD_SITE) {
-      SiteButton view = new SiteButton(data);
-      add(view);
-      views[data] = view;
-      print(data);
-    }
-
-  }
+//  Map<Item, View> views = {
+//  };
+//
+//  @override
+//  void handleMsg(String msg, data) {
+//    if (msg == ADD_SITE) {
+//      SiteButton view = new SiteButton(data);
+//      add(view);
+//      views[data] = view;
+//      print(data);
+//    }
+//  }
 }
 
 class SiteButton extends View {

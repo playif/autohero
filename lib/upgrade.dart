@@ -1,7 +1,23 @@
 part of model;
 
 
-class Upgrade extends View {
+class UpgradeView extends View {
+  Upgrade upgrade;
+
+  UpgradeView(this.upgrade) {
+    width = 100;
+    height = 100;
+    border = 1;
+
+    add(text(upgrade.name));
+
+    onClick.listen((e) {
+      
+    });
+  }
+}
+
+class Upgrade {
   String name;
   String desc;
 }

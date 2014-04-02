@@ -154,8 +154,8 @@ class WeaponView extends View {
   WeaponView(this.item);
 
   init() {
-    width = 50;
-    height = 50;
+    width = 100;
+    height = 100;
     border = 1;
 
     add(text(item.name));
@@ -166,8 +166,6 @@ class WeaponView extends View {
         hideWeapons();
         unEquip(game.currentItem, game.currentRole);
         equip(this.item, game.currentRole);
-      } else if (parent is ItemPanel) {
-        //game.currentWeaponIndex = inventoryItems.indexOf(this.item);
       } else {
         game.currentItem = this.item;
         game.currentWeaponIndex = game.currentRole.weapons.indexOf(this.item);
