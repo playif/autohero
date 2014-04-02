@@ -16,14 +16,15 @@ class BattleRolePanel extends View {
 
   }
 
+
 }
 
 class RoleView extends View {
-  final Role role;
+  //  final Role role;
 
+  //final Role role;
+  //  final View actionPanel = new View();
 
-  final View actionPanel = new View();
-  final View weaponPanel = new View();
 
   Bar expBar = new Bar();
   Label levelLabel = new Label();
@@ -31,9 +32,35 @@ class RoleView extends View {
 
   RoleView(this.role);
 
+  //  @override
+  //  void handleMsg(String msg, data) {
+  //    if (msg == ADD_ROLE_ACTION) {
+  //      ActionView view = new ActionView(data[0]);
+  //      actionPanel.add(view);
+  //    }
+  //
+  //  }
+
+  final Role role;
+  final View weaponPanel = new View();
+  final View actionPanel = new View();
+
+  Map<Item, View> views = {
+  };
+
   @override
   void handleMsg(String msg, data) {
-    if (msg == ADD_ROLE_ACTION) {
+    //    Role role = data[1];
+    //    Weapon weapon = data[0];
+    if (msg == ADD_ROLE_WEAPON && data[1] == role) {
+      WeaponView view = new WeaponView(data[0]);
+      weaponPanel.insert(role.weapons.indexOf(data[0]), view);
+      views[data[0]] = view;
+    } else if (msg == REMOVE_ROLE_WEAPON && data[1] == role) {
+      //WeaponView view = new WeaponView(data[0]);
+      weaponPanel.remove(views[data[0]]);
+      views.remove(data[0]);
+    } else if (msg == ADD_ROLE_ACTION && data[1] == role) {
       ActionView view = new ActionView(data[0]);
       actionPanel.add(view);
     }
@@ -44,8 +71,10 @@ class RoleView extends View {
     width = 180;
     height = 150;
     actionPanel.height = 20;
-    actionPanel.watch('width', this, 'width');
+    actionPanel.bindField('width', this, 'width');
     actionPanel.style.overflow = 'hidden';
+    actionPanel.vertical = false;
+
     add(new Label()
       ..text = role.name);
 
@@ -53,14 +82,14 @@ class RoleView extends View {
       ..name = "等級: "
       ..classes.add("small-text");
 
-    levelLabel.watch('text', role, 'level');
+    levelLabel.bindField('text', role, 'level');
 
     add(levelLabel);
 
     add(damageLabel
       ..name = "傷害: "
       ..classes.add("small-text"));
-    damageLabel.watch('text', role, 'damage');
+    damageLabel.bindField('text', role, 'damage');
 
     add(actionPanel);
     add(weaponPanel);
@@ -70,8 +99,8 @@ class RoleView extends View {
     expBar.width = 188;
     expBar.height = 5;
     expBar.color = 0;
-    expBar.watch('max', role, 'MXP');
-    expBar.watch('min', role, 'XP');
+    expBar.bindField('max', role, 'MXP');
+    expBar.bindField('min', role, 'XP');
 
     //    classes.add('box');
     //    classes.add('vbox');

@@ -11,12 +11,12 @@ class ItemPanel extends View {
 
     wrap = true;
     cellMargin = 15;
-
+    bindList(inventoryItems, ItemView);
   }
 
   Map<Item, View> views = {
   };
-
+/*
   @override
   void handleMsg(String msg, data) {
     if (msg == ADD_INVENTORY_ITEM) {
@@ -24,8 +24,12 @@ class ItemPanel extends View {
       add(view);
       views[data] = view;
     }
-
-  }
+    if (msg == REMOVE_INVENTORY_ITEM) {
+      //ItemView view = new ItemView(data);
+      remove(views[data]);
+      views.remove(data);
+    }
+  }*/
 }
 
 class ItemView extends View {
@@ -39,11 +43,137 @@ class ItemView extends View {
     height = 100;
     border = 1;
 
+
     add(text(item.name));
 
     onClick.listen((e) {
+      if (game.currentItemIndex != -1) {
+        int index = inventoryItems.indexOf(this.item);
+        var item = inventoryItems[index];
+
+        inventoryItems[index] = inventoryItems[game.currentItemIndex];
+
+        inventoryItems[game.currentItemIndex] = item;
+
+        //        itemPanel.children.sort((ItemView a, ItemView b) {
+        //          if (inventoryItems.indexOf(a.item) > inventoryItems.indexOf(b.item)) {
+        //            return 1;
+        //          } else if (inventoryItems.indexOf(a.item) > inventoryItems.indexOf(b.item)) {
+        //            return -1;
+        //          } else return 0;
+        //        });
+
+
+        print(game.currentItemIndex);
+        //        itemPanel.children.forEach((ItemView i) {
+        //          itemPanel.element.append(i.element);
+        //        });
+
+        //TODO change
+
+
+        game.currentItemIndex = -1;
+        return;
+      }
+      //print(game.currentItemIndex);
+      game.currentItemIndex = inventoryItems.indexOf(this.item);
       setToolTip(new Label()
         ..text = item.name);
+    });
+  }
+
+  onShow() {
+    game.currentItemIndex = -1;
+  }
+/* TODO for con
+  @override
+  init() {
+    super.init();
+
+    onClick.listen((e) {
+      print("hi");
+    });
+
+
+  }*/
+}
+
+class WeaponSelectPanel extends View {
+
+  WeaponSelectPanel() {
+    vertical = false;
+    wrap = true;
+    cellPadding = 15;
+    cellMargin = 5;
+    width = 600;
+    height = 400;
+    top = 100;
+    left = 100;
+    layout = false;
+    visible = false;
+    style.backgroundColor = 'gray';
+    style.zIndex = '2000';
+
+    Button cancel = new Button();
+    cancel.text = "取消";
+    cancel.size = 30;
+    cancel.layout = false;
+    cancel.top = 330;
+    cancel.left = 510;
+    cancel.onClick.listen((e) {
+      hideWeapons();
+    });
+    add(cancel);
+    add(new WeaponView(Slot()));
+
+    bindList(inventoryItems, WeaponView, (List list) => list.where((Item s) => s is Weapon).toList());
+  }
+
+  Map<Item, View> views = {
+  };
+
+//  @override
+//  void handleMsg(String msg, data) {
+//    if (msg == ADD_INVENTORY_ITEM && data is Weapon) {
+//      WeaponView view = new WeaponView(data);
+//
+//      add(view);
+//
+//      views[data] = view;
+//    } else if (msg == REMOVE_INVENTORY_ITEM && data is Weapon) {
+//      remove(views[data]);
+//      views.remove(data);
+//    }
+//  }
+}
+
+class WeaponView extends View {
+
+  final Weapon item;
+
+  WeaponView(this.item);
+
+  init() {
+    width = 50;
+    height = 50;
+    border = 1;
+
+    add(text(item.name));
+
+    onClick.listen((e) {
+
+      if (parent is WeaponSelectPanel) {
+        hideWeapons();
+        unEquip(game.currentItem, game.currentRole);
+        equip(this.item, game.currentRole);
+      } else if (parent is ItemPanel) {
+        //game.currentWeaponIndex = inventoryItems.indexOf(this.item);
+      } else {
+        game.currentItem = this.item;
+        game.currentWeaponIndex = game.currentRole.weapons.indexOf(this.item);
+        showWeapons();
+      }
+
     });
   }
 /* TODO for con
@@ -89,6 +219,13 @@ Attribute DAMAGE = (Role role, num value) {
 Attribute DAMAGE_Modify = (Role role, num value) {
   role.damage += value;
 };
+
+Item Slot() {
+  Weapon item = new Weapon();
+  item
+    ..name = "空格";
+  return item;
+}
 
 Item Dagger() {
   Weapon item = new Weapon();
@@ -206,30 +343,29 @@ class Weapon extends Item {
 
   int get level => _level;
 
-  Role _role;
+  //  Role _role;
 
-  set level(int value) {
-    Role role = _role;
-    unequip();
+  setlevel(int value, Role role) {
+    //    Role role = _role;
+    unequip(role);
     _level = value;
     equip(role);
   }
 
 
   void equip(Role role) {
-    _role = role;
+    //    _role = role;
     for (var a in fomulas.keys) {
-      a(_role, fomulas[a]());
+      a(role, fomulas[a]());
     }
     //onEquip(role);
   }
 
-  void unequip() {
+  void unequip(Role role) {
     //onEquip(role);
     for (var a in fomulas.keys) {
-      a(_role, -1 * fomulas[a]());
+      a(role, -1 * fomulas[a]());
     }
-    _role = null;
   }
 
 

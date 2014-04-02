@@ -13,6 +13,7 @@ class TeamPanel extends TabPanel {
     if (msg == ADD_ROLE) {
       roles.add(data);
       RoleDetailPanel rdp = new RoleDetailPanel(data);
+      rdp.cellPadding = 20;
       rdp.watchSize(panels);
       addPanel(new Label()
         ..text = data.name
@@ -22,28 +23,52 @@ class TeamPanel extends TabPanel {
 
   }
 
-  addRole(Role role) {
+  //  addRole(Role role) {
+  //
+  //  }
+  //
+  //  removeRole(Role role) {
+  //    roles.remove(role);
+  //
+  //  }
 
-  }
-
-  removeRole(Role role) {
-    roles.remove(role);
-
+  onShow() {
+    showPanelID(0);
   }
 
 }
 
-class RoleDetailPanel extends View {
-
-
+class ActionPanelHost {
   final Role role;
-  final View actionPanel = new View();
+
+
+}
+
+//class WeaponView view
+
+class WeaponPanelHost {
+
+
+}
+
+
+class RoleDetailPanel extends RoleView {
+
+
   final Label levelLabel = new Label();
   final Label damageLabel = new Label();
 
-  RoleDetailPanel(this.role) {
+  final View upgradePanel = new View();
+
+
+  RoleDetailPanel(Role role) :super(role) {
 
   }
+
+  onShow() {
+    game.currentRole = role;
+  }
+
 
   init() {
 
@@ -53,17 +78,24 @@ class RoleDetailPanel extends View {
     print(role.name);
     levelLabel
       ..name = '等級: '
-      ..watch('text', role, 'level')
-      ..classes.add("small-text");
+      ..bindField('text', role, 'level')
+      ..size = 25;
     add(levelLabel);
 
     add(damageLabel
       ..name = '傷害: '
-      ..watch('text', role, 'damage')
+      ..bindField('text', role, 'damage')
       ..classes.add("small-text"));
 
-
+    actionPanel.vertical = false;
+    actionPanel.width = 200;
+    actionPanel.height = 20;
     add(actionPanel);
+
+    weaponPanel.vertical = false;
+    weaponPanel.width = 200;
+    weaponPanel.height = 200;
+    add(weaponPanel);
     //add(itemPanel);
 
 

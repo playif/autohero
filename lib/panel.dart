@@ -5,6 +5,7 @@ class GameInfoPanel extends View {
 
   init() {
     border = 0;
+    //cellPadding = 20;
 
     add(new Label()
       ..text = '資訊版面'
@@ -13,7 +14,7 @@ class GameInfoPanel extends View {
     //infoPanel.breakLine();
     add(new Label()
       ..name = "金幣: "
-      ..watch('text', game, 'money', transform:(m) {
+      ..bindField('text', game, 'money', transform:(m) {
       return "<b>$m</b>";
     }));
 

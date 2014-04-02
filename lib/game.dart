@@ -28,6 +28,10 @@ final GameModel game = new GameModel();
 class GameModel extends Model {
   int money = 0;
   Site currentSite;
+  Role currentRole;
+  Weapon currentItem;
+  int currentItemIndex = -1;
+  int currentWeaponIndex = -1;
 }
 //top level array
 final List<Role> roles = [];
@@ -52,7 +56,7 @@ final BattleRolePanel battleRolePanel = new BattleRolePanel();
 final BattleMonsterPanel battleMonsterPanel = new BattleMonsterPanel();
 final TeamPanel teamPanel = new TeamPanel();
 final GameInfoPanel infoPanel = new GameInfoPanel();
-
+final WeaponSelectPanel weaponSelectPanel = new WeaponSelectPanel();
 
 const String ROLE = 'role';
 const String ITEM = 'item';
@@ -61,11 +65,13 @@ const String REMOVE_ROLE = 'removeRole';
 const String ADD_MONSTER = 'addMonster';
 const String REMOVE_MONSTER = 'removeMonster';
 const String ADD_INVENTORY_ITEM = 'addInventoryItem';
+const String REMOVE_INVENTORY_ITEM = 'removeInventoryItem';
 const String ADD_ROLE_ACTION = 'addRoleAction';
 const String REMOVE_ROLE_ACTION = 'removeRoleAction';
 const String ADD_SITE = 'addSite';
 const String REMOVE_SITE = 'removeSite';
-
+const String ADD_ROLE_WEAPON = 'addRoleWeapon';
+const String REMOVE_ROLE_WEAPON = 'removeRoleWeapon';
 
 const String EQUIP = 'equip';
 
@@ -91,10 +97,13 @@ void removeRole(Role role) {
 //}
 
 void addRoleAction(Action action, Role role) {
-
   role.actions.add(action);
-  //  action.role=role;
   root.sendMsg(ADD_ROLE_ACTION, [action, role]);
+}
+
+void removeRoleAction(Action action, Role role) {
+  role.actions.remove(action);
+  root.sendMsg(REMOVE_ROLE_ACTION, [action, role]);
 }
 
 void addMonster(Monster monster) {
@@ -105,6 +114,20 @@ void addMonster(Monster monster) {
 void removeMonster(Monster monster) {
   monsters.remove(monster);
   root.sendMsg(REMOVE_MONSTER, monster);
+}
+
+void addRoleWeapon(Weapon weapon, Role role, [int index=-1]) {
+  if (index == -1) index = role.weapons.length;
+  print(index);
+  weapon.equip(role);
+  role.weapons.insert(index, weapon);
+  root.sendMsg(ADD_ROLE_WEAPON, [weapon, role]);
+}
+
+void removeRoleWeapon(Weapon weapon, Role role) {
+  weapon.unequip(role);
+  role.weapons.remove(weapon);
+  root.sendMsg(REMOVE_ROLE_WEAPON, [weapon, role]);
 }
 
 void addSite(Site site) {
@@ -118,23 +141,42 @@ void removeSite(Site site) {
 }
 
 void addInventoryItem(Item item) {
+  //  if (index == -1) index = inventoryItems.length;
+  //  print(index);
   inventoryItems.add(item);
   root.sendMsg(ADD_INVENTORY_ITEM, item);
 }
 
 void removeInventoryItem(Item item) {
-
+  inventoryItems.remove(item);
+  root.sendMsg(REMOVE_INVENTORY_ITEM, item);
 }
+
+String slotName = '空格';
 
 void equip(Weapon weapon, Role role) {
-  weapon.equip(role);
-
-  root.sendMsg(EQUIP, [weapon, role]);
+  //print(game.currentWeaponIndex);
+  if (weapon.name == slotName) {
+    addRoleWeapon(Slot(), role, game.currentWeaponIndex);
+  } else if (weapon.name != slotName) {
+    addRoleWeapon(weapon, role, game.currentWeaponIndex);
+    removeInventoryItem(weapon);
+  }
 }
 
-void unequipItem(Item item, Role role) {
+void unEquip(Weapon weapon, Role role) {
+  removeRoleWeapon(weapon, role);
+  if (weapon.name != slotName) {
+    addInventoryItem(weapon);
+  }
+}
 
+void showWeapons() {
+  weaponSelectPanel.visible = true;
+}
 
+void hideWeapons() {
+  weaponSelectPanel.visible = false;
 }
 
 void setToolTip(View tip) {
@@ -163,8 +205,8 @@ init() {
   root.backgroundColorL = 10;
   root.backgroundColorS = 10;
 
-  mainPanel.watch('width', root, 'width', transform:(s) => s - 200);
-  mainPanel.watch('height', contentPanel, 'height');
+  mainPanel.bindField('width', root, 'width', transform:(s) => s - 200);
+  mainPanel.bindField('height', contentPanel, 'height');
 
   mainPanel.addPanel(battlePanel);
   mainPanel.addPanel(sitePanel);
@@ -178,28 +220,28 @@ init() {
   battlePanel.add(battleMonsterPanel);
 
   battleRolePanel.width = 200;
-  battleRolePanel.watch('height', mainPanel, 'height');
+  battleRolePanel.bindField('height', mainPanel, 'height');
 
-  battleMonsterPanel.watch('height', mainPanel, 'height');
-  battleMonsterPanel.watch('width', mainPanel, 'width', transform:(s) => s - battleRolePanel.width);
+  battleMonsterPanel.bindField('height', mainPanel, 'height');
+  battleMonsterPanel.bindField('width', mainPanel, 'width', transform:(s) => s - battleRolePanel.width);
   battleMonsterPanel.cellMargin = 15;
   battleMonsterPanel.vertical = false;
   battleMonsterPanel.wrap = true;
 
   menuPanel.height = 70;
-  menuPanel.watch('width', root, 'width');
+  menuPanel.bindField('width', root, 'width');
   menuPanel.cellMargin = 15;
   menuPanel.vertical = false;
 
 
-  infoPanel.watch('height', contentPanel, 'height');
+  infoPanel.bindField('height', contentPanel, 'height');
   infoPanel.width = 200;
   siteInfoPanel.height = 120;
-  siteInfoPanel.watch('width', infoPanel, 'width');
+  siteInfoPanel.bindField('width', infoPanel, 'width');
 
 
-  contentPanel.watch('height', root, 'height', transform:(s) => s - 70);
-  contentPanel.watch('width', root, 'width');
+  contentPanel.bindField('height', root, 'height', transform:(s) => s - 70);
+  contentPanel.bindField('width', root, 'width');
   contentPanel.vertical = false;
 
   //infoPanel.vertical = false;
@@ -236,7 +278,7 @@ init() {
   setSite(sites[0]);
   //sitePanel.add()
 
-
+  root.add(weaponSelectPanel);
   //add(RedPotion());
   //add(RedPotion());
 
@@ -287,7 +329,7 @@ void _update(Timer timer) {
   });
 
 
-  checkBindings();
+  //checkBindings();
   root.updateView();
   //_updateEntities(this);
 }

@@ -33,8 +33,10 @@ void main() {
   createMenuButton("日記", itemPanel);
   createMenuButton("系統", itemPanel);
 
-
-  addRole(Worrier());
+  Role r = Worrier();
+  addRole(r);
+  addRoleWeapon(Slot(), r);
+  addRoleWeapon(Slot(), r);
   addRole(Mage());
 
 

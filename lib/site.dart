@@ -84,7 +84,7 @@ class SiteView extends View {
     levelLabel
       ..size = 20;
     levelLabel.name = '等級: ';
-    levelLabel.watch('text', site, 'level');
+    levelLabel.bindField('text', site, 'level');
     add(levelLabel);
 
     site.setLevel(site.currentMaxLevel);
@@ -107,8 +107,8 @@ class SiteView extends View {
     progressBar.width = 180;
     progressBar.height = 10;
     //progressBar.borderColorH=50;
-    progressBar.watch('max', site, 'maxProgress');
-    progressBar.watch('min', site, 'currentProgress');
+    progressBar.bindField('max', site, 'maxProgress');
+    progressBar.bindField('min', site, 'currentProgress');
     add(progressBar);
     //    SelectElement se = new SelectElement();
     //    OptionElement opt = new OptionElement();

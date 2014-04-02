@@ -56,7 +56,7 @@ class MonsterView extends View {
     HPLabel.name = "生命: ";
 
     //bf(this,HP,HPLabel,HPLabel.text);
-    binding(monster, 'HP', HPLabel, 'text');
+    HPLabel.bindField('text', monster, 'HP');
     add(HPLabel);
 
 
@@ -64,7 +64,7 @@ class MonsterView extends View {
     HPBar.height = 5;
     HPBar.color = 0;
     HPBar.max = monster.MHP;
-    binding(monster, 'HP', HPBar, 'min');
+    HPBar.bindField('min', monster, 'HP');
     add(HPBar);
 
 
@@ -74,14 +74,11 @@ class MonsterView extends View {
     border = 1;
 
     onClick.listen((e) {
-      monster.HP -= 1; 
+      monster.HP -= 100;
     });
 
     classes.add('btn act-red');
 
-    //HPLabel.text = "生命:$_HP";
-    //HPBar.min = _HP;
-    //    this.height=200;
   }
 }
 

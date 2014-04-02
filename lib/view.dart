@@ -1,89 +1,126 @@
 library view;
 
-
 @MirrorsUsed(targets: const ['view', 'model'])
 import 'dart:mirrors';
-
 import 'dart:html';
 import 'dart:async';
 import 'dart:math';
 
-//import 'model.dart';
-
 part 'binging.dart';
-//
-////import 'dart:mirrors';
-//abstract class Updatable {
-//  void update();
-//}
-//
-//View _root = new View();
-//
-//initView() {
-//  _resetWindowSize();
-//  window.onResize.listen((e) {
-//    _resetWindowSize();
-//    //    updateView();
-//  });
-//
-//  //document.body.children.add(_root.element);
-//  //  document.body.style.height=windowHeight;
-//}
-//
-//class _ViewPort {
-//  num _windowHeight = window.innerHeight;
-//
-//  num get windowHeight => _windowHeight;
-//
-//  num _windowWidth = window.innerHeight;
-//
-//  num get windowWidth => _windowWidth;
-//}
-//
-//View viewPort = new View();
-//
-//_resetWindowSize() {
-//  viewPort.height = window.innerHeight;
-//  viewPort.width = window.innerWidth;
-//  document.body.style.height = '${viewPort.height}';
-//  document.body.style.maxHeight = '${viewPort.width}';
-//}
-//
-//
-////updateView() {
-////  _update(_root);
-////}
-//
-//_update(View view) {
-//  view.children.removeWhere((c) => c.die);
-//
-//  //view.updateView();
-//
-//  view.children.forEach((c) => _update(c));
-//}
-//
-//class GameView extends View {
-//  init() {
-//
-//  }
-//
-//
-//  List<View> getViews() {
-//    return [new View()];
-//  }
-//
-//  updateView() {
-//    var views = getViews();
-//    views.forEach((v) {
-//      if (!children.contains(v)) {
-//        children.add(v);
-//      }
-//    });
-//
-//  }
-//}
+
+typedef List FilterFunc(List list);
+
+typedef BindingTransformFunc(s);
+
+typedef OPRequest(i);
+
+class _Binding {
+  Object source;
+  Symbol sourceField;
+  Symbol targetField;
+  dynamic currentValue;
+  BindingTransformFunc func;
+
+  _Binding(this.source, this.sourceField, this.targetField, this.currentValue, this.func);
+}
+
+class _ListBinding {
+  List source;
+  List currentList = [];
+
+  //OPRequest insert;
+  //OPRequest remove;
+  FilterFunc filter;
+  Type childType;
+
+  _ListBinding(this.source, this.childType, this.filter) {
+    //    currentList = new List.from(source);
+  }
+
+  createChild(arg) {
+    var child = reflectClass(childType).newInstance(const Symbol(''), [arg]);
+    return child.reflectee;
+  }
+}
 
 class View {
+  final List<_Binding> _fieldBindings = [];
+  _ListBinding _listBinding;
+  final Map<dynamic, View> _views = {
+  };
+
+  void bindList(List list, Type childType, [FilterFunc filter]) {
+    _listBinding = new _ListBinding(list, childType, filter);
+  }
+
+  void unbindList() {
+    _listBinding = null;
+  }
+
+  void bindField(String field, source, String sourceField, { BindingTransformFunc transform}) {
+    _Binding binding = new _Binding(source, new Symbol(sourceField), new Symbol(field), null, transform);
+    _fieldBindings.add(binding);
+  }
+
+  void checkListBinding() {
+    if (_listBinding != null) {
+      List tList;
+      if (_listBinding.filter != null) {
+        tList = _listBinding.filter(_listBinding.source);
+      } else {
+        tList = _listBinding.source;
+      }
+      List cList = _listBinding.currentList;
+
+      void insertOP(int i) {
+        var view = _listBinding.createChild(tList[i]);
+        insert(i, view);
+        _views[tList[i]] = view;
+        cList.insert(i, tList[i]);
+      }
+      for (int i = 0;i < tList.length;i++) {
+        if (i >= cList.length) {
+          for (int j = i;j < tList.length;j++) {
+            insertOP(j);
+          }
+          break;
+        }
+        if (tList[i] != cList[i]) {
+          var idx = cList.indexOf(tList[i]);
+          if (idx == -1) {
+            insertOP(i);
+          } else {
+            move(idx, i);
+            var tmp = cList[idx];
+            cList.removeAt(idx);
+            cList.insert(i, tmp);
+          }
+        }
+      }
+      for (int i = tList.length;i < cList.length;i++) {
+        remove(_views[cList[i]]);
+        _views.remove(cList[i]);
+      }
+      cList.removeRange(tList.length, cList.length);
+    }
+  }
+
+
+  void checkFieldBindings() {
+    _fieldBindings.forEach((binding) {
+      var cv = reflect(binding.source).getField(binding.sourceField).reflectee;
+      if (binding.currentValue != cv) {
+        if (binding.func == null) {
+          reflect(this).setField(binding.targetField, cv);
+        } else {
+          reflect(this).setField(binding.targetField, binding.func(cv));
+        }
+        binding.currentValue = cv;
+      }
+    });
+  }
+
+
   dynamic observable;
 
   View _parent = null;
@@ -250,11 +287,22 @@ class View {
     _cellMargin = value;
   }
 
+  num _cellPadding = 0;
+
+  num get cellPadding => _cellPadding;
+
+  set cellPadding(num value) {
+    _cellPadding = value;
+  }
+
   bool _visible = true;
 
   bool get visible => _visible;
 
   set visible(bool value) {
+    if (!_visible && value) {
+      onShow();
+    }
     _visible = value;
     if (value) {
       style.display = 'block';
@@ -281,11 +329,17 @@ class View {
     //print("here");
   }
 
+  void onShow() {
+
+  }
+
   //  void expandWidth(){
   //    watch('width',entityParent,'width');
   //  }
 
+  bool layoutCell = true;
   bool layout = true;
+
   bool vertical = true;
   bool wrap = false;
   num cellWidth = 100;
@@ -293,31 +347,13 @@ class View {
 
 
   void updateView() {
-    /*
-    num ch = 0;
-    children.forEach((View v) {
-      v.top = ch;
-      //v.width = width-v.border*2;
-      //      if(v.height == null){
-      //        print("Hi");
-      //      }
-      ch += v.height+v.border*2+v.margin;
-    });
+    checkFieldBindings();
+    checkListBinding();
+    children.forEach((c) => c.updateView());
 
-    //num ch = 0;
-    children.forEach((View v) {
-      v.left = ch;
-      //v.height = height-v.border*2;
-      //      if(v.height == null){
-      //        print("Hi");
-      //      }
-      ch += v.width+v.border*2+v.margin;
-    });
-*/
-
-    if (layout) {
-      num cx = cellMargin;
-      num cy = cellMargin;
+    if (layoutCell) {
+      num cx = cellMargin + cellPadding;
+      num cy = cellMargin + cellPadding;
       if (vertical) {
 
         children.forEach((View v) {
@@ -331,10 +367,10 @@ class View {
           //            print(v.element.getClientRects()[0]);
           //          }
           //print(rect.height);
-          if (!v.visible)return;
-          if (wrap && cy + v.height >= height) {
-            cy = cellMargin;
-            cx += cellWidth + v.border * 2 + cellMargin;
+          if (!v.visible || !v.layout)return;
+          if (wrap && cy + v.height + v.border * 2 + cellMargin + cellPadding >= height) {
+            cy = cellMargin + cellPadding;
+            cx += v.width + v.border * 2 + cellMargin;
           }
           v.left = cx;
           v.top = cy;
@@ -342,10 +378,10 @@ class View {
         });
       } else {
         children.forEach((View v) {
-          if (!v.visible)return;
-          if (wrap && cx + v.width >= width) {
-            cx = cellMargin;
-            cy += cellHeight + v.border * 2 + cellMargin;
+          if (!v.visible || !v.layout)return;
+          if (wrap && cx + v.width + v.border * 2 + cellMargin + cellPadding >= width) {
+            cx = cellMargin + cellPadding;
+            cy += v.height + v.border * 2 + cellMargin;
           }
           v.left = cx;
           v.top = cy;
@@ -356,7 +392,6 @@ class View {
     }
 
 
-    children.forEach((c) => c.updateView());
   }
 
   void init() {
@@ -369,6 +404,23 @@ class View {
     _children.add(entity);
     entity._parent = this;
     _element.children.add(entity._element);
+    //updateView();
+  }
+
+  void insert(int index, View entity) {
+    entity.init();
+    entity.updateView();
+    _children.insert(index, entity);
+    entity._parent = this;
+    _element.children.insert(index, entity._element);
+    //updateView();
+  }
+
+  void move(int from, int to) {
+    View v = _children[from];
+    _children.removeAt(from);
+    _children.insert(to, v);
+    _element.children.insert(to, v._element);
   }
 
   //  void addChild(View entity) {
@@ -391,11 +443,11 @@ class View {
   //
   //  }
 
-  void breakLine() {
-    element.children.add(new DivElement()
-      ..style.clear = "both");
-    //add(new LineBreaker());
-  }
+  //  void breakLine() {
+  //    element.children.add(new DivElement()
+  //      ..style.clear = "both");
+  //    //add(new LineBreaker());
+  //  }
 
   //  void _leave() {
   //    if (parent == null) {
@@ -413,13 +465,10 @@ class View {
     parent.add(this);
   }
 
-  void watch(String field, source, String sourceField, {bool twoWay:false, bindingTransformFunc transform}) {
-    binding(source, sourceField, this, field, twoWay:twoWay, transform:transform);
-  }
 
   void watchSize(View panel) {
-    watch('width', panel, 'width');
-    watch('height', panel, 'height');
+    bindField('width', panel, 'width');
+    bindField('height', panel, 'height');
   }
 
   CssStyleDeclaration get style => _element.style;
@@ -605,7 +654,7 @@ class Clock extends View {
 
 
   Clock() {
-    layout = false;
+    layoutCell = false;
     width = 20;
     height = 20;
     classes.add('border');
@@ -769,9 +818,9 @@ class TabPanel extends View {
     add(panels);
 
     tabs.width = tabWidth;
-    tabs.watch('height', this, 'height');
-    panels.watch('width', this, 'width', transform:(s) => s - tabWidth);
-    panels.watch('height', this, 'height');
+    tabs.bindField('height', this, 'height');
+    panels.bindField('width', this, 'width', transform:(s) => s - tabWidth);
+    panels.bindField('height', this, 'height');
   }
 
   void addPanel(View tab, View panel) {

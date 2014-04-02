@@ -78,7 +78,7 @@ class ActionView extends View {
       ..text = action.name
       ..style.overflow = 'hidden');
 
-    timerClock.watch('min', action, 'activeTimer');
+    timerClock.bindField('min', action, 'activeTimer');
   }
 }
 
