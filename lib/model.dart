@@ -1,5 +1,48 @@
 //part of model;
+library model;
 
+@MirrorsUsed(targets: const ['model'])
+import 'dart:mirrors';
+
+class Formula {
+  String name;
+
+  num call() {
+
+  }
+
+}
+
+class ModifierModel {
+  final List<Modifier> modifiers = [];
+
+  addModifier(String field, String desc, Formula formula) {
+    modifiers.add(new Modifier(new Symbol(field), formula, desc));
+  }
+
+
+//  View createInfoView(){
+//    View view=new View();
+//    view.width=200;
+//
+//  }
+}
+
+class Modifier {
+  Symbol field;
+  Formula formula;
+  String desc;
+
+  Modifier(this.field, this.formula, this.desc);
+
+  modify(target) {
+    reflect(target).setField(field, formula());
+  }
+
+  unmodify(target) {
+    reflect(target).setField(field, -1 * formula());
+  }
+}
 
 
 class Model {

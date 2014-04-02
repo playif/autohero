@@ -1,4 +1,4 @@
-part of model;
+part of game;
 
 //Map<String, Site> SiteMap = {
 //  "a": new Site(),

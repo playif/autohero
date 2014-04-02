@@ -1,4 +1,4 @@
-part of model;
+part of game;
 
 int PROB = 100;
 

@@ -1,4 +1,4 @@
-part of model;
+part of game;
 
 /*
 道具有分裝備品、消耗品、和收藏品。
@@ -187,7 +187,7 @@ class WeaponView extends View {
   }*/
 }
 
-class Item extends Model {
+class Item extends Model with ModifierModel {
   String name = "item";
   bool stack = true;
   int price = 0;
@@ -324,11 +324,11 @@ Mystery(Weapon item) {
 //};
 typedef void Effect(Role role);
 
-typedef num Fomula();
+typedef num Formula();
 
 
 class Weapon extends Item {
-  final Map<Attribute, Fomula> fomulas = {
+  final Map<Attribute, Formula> fomulas = {
   };
 
   //  int operator []=(String fomula){
@@ -376,7 +376,7 @@ class Consumable extends Item {
   int number;
 
 
-  final Map<Attribute, Fomula> fomulas = {
+  final Map<Attribute, Formula> fomulas = {
   };
 
   use() {

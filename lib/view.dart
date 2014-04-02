@@ -1,6 +1,6 @@
 library view;
 
-@MirrorsUsed(targets: const ['view', 'model'])
+@MirrorsUsed(targets: const ['view', 'game'])
 import 'dart:mirrors';
 import 'dart:html';
 import 'dart:async';
@@ -104,11 +104,11 @@ class View {
       }
       cList.removeRange(tList.length, cList.length);
     }
-    children.forEach((View c) => c.checkListBinding());
+    children.forEach((View c) => c.checkListBinding(force));
   }
 
   void checkFieldBindings([bool force=false]) {
-    children.forEach((View c) => c.checkFieldBindings());
+    children.forEach((View c) => c.checkFieldBindings(force));
     if (!_visible && !force)return;
     _fieldBindings.forEach((binding) {
       var cv = reflect(binding.source).getField(binding.sourceField).reflectee;
@@ -283,6 +283,15 @@ class View {
     //print('hsla(${_borderColorH},${_borderColorS}%,${_borderColorL}%,${_borderColorA})');
   }
 
+  num _opacity = 1;
+
+  num get opacity => _opacity;
+
+  set opacity(num value) {
+    _opacity = value;
+    style.opacity = "$_opacity";
+  }
+
   num _cellMargin = 0;
 
   num get cellMargin => _cellMargin;
@@ -341,7 +350,7 @@ class View {
 
   void reArrange([bool force=false]) {
     if (!_visible && !force)return;
-    children.forEach((View c) => c.reArrange());
+    children.forEach((View c) => c.reArrange(force));
     if (layoutCell) {
       num cx = cellPadding;
       num cy = cellPadding;

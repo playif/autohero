@@ -1,4 +1,4 @@
-part of model;
+part of game;
 
 
 class TeamPanel extends TabPanel {

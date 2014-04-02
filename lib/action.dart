@@ -5,7 +5,7 @@
 行為本身有等級之分，
 */
 
-part of model;
+part of game;
 
 class Component extends Model {
   Model host;
@@ -86,7 +86,7 @@ class Action extends Model with TimeWatcher {
   int level = 1;
   num effect = 1;
   String name = "action";
-  final Map<ActionActive, Fomula> actives = {
+  final Map<ActionActive, Formula> actives = {
   };
 
   //Role role;

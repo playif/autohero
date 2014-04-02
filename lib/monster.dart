@@ -1,4 +1,4 @@
-part of model;
+part of game;
 
 //const Sym_HP = const Symbol('HP');
 

@@ -1,4 +1,4 @@
-part of model;
+part of game;
 
 class BattleRolePanel extends View {
 
@@ -148,6 +148,8 @@ class Role extends Model {
 
   num XP = 0;
 
+  int UP = 0;
+
 
   @override
   void update() {
@@ -160,6 +162,7 @@ class Role extends Model {
     if (XP >= MXP) {
       XP = 0;
       level += 1;
+      UP += 1;
       //      levelLabel
       //        ..text = "等級:${level}";
       MXP += level * level * 2;

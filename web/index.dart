@@ -35,7 +35,7 @@ void main() {
 
   Role r = Worrier();
   addRole(r);
-  r.upgrades.add(up1());
+  r.upgrades.add(up1(r));
   addRoleWeapon(Slot(), r);
   addRoleWeapon(Slot(), r);
   addRole(Mage());

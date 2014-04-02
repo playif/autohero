@@ -1,4 +1,4 @@
-part of model;
+part of game;
 
 
 //typedef void RoleState(Role role, num value);
@@ -102,10 +102,10 @@ class State extends Model with TimeWatcher {
   //bool isTemp = true;
 
   //List<Action> actions=[];
-  final Map<StateActive, Fomula> actives = {
+  final Map<StateActive, Formula> actives = {
   };
 
-  final Map<StateAttach, Fomula> attaches = {
+  final Map<StateAttach, Formula> attaches = {
   };
 
 

@@ -1,4 +1,4 @@
-library model;
+library game;
 
 import 'dart:html';
 import 'dart:async';
