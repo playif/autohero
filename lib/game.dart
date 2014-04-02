@@ -119,13 +119,13 @@ void removeMonster(Monster monster) {
 void addRoleWeapon(Weapon weapon, Role role, [int index=-1]) {
   if (index == -1) index = role.weapons.length;
   //  print(index);
-  weapon.equip(role);
+  weapon.modify(role);
   role.weapons.insert(index, weapon);
   //  root.sendMsg(ADD_ROLE_WEAPON, [weapon, role]);
 }
 
 void removeRoleWeapon(Weapon weapon, Role role) {
-  weapon.unequip(role);
+  weapon.unmodify(role);
   role.weapons.remove(weapon);
   //  root.sendMsg(REMOVE_ROLE_WEAPON, [weapon, role]);
 }

@@ -4,22 +4,61 @@ library model;
 @MirrorsUsed(targets: const ['model'])
 import 'dart:mirrors';
 
-class Formula {
-  String name;
+typedef num Formula();
 
-  num call() {
+Map<String, String> AttributeName = {
+    'HP':'生命',
+    'damage':'傷害',
+    'damage2':'傷害',
+};
 
-  }
+//Map<String, List<num>> AttributeEffect = {
+//    'HP':'生命',
+//    'damage':'傷害',
+//    'damage2':'傷害',
+//
+//};
 
-}
+//Map<String, Modifier> Modifiers = {
+//    "": new Modifier('HP', [20]), };
+
+
+const Modifier HPAdd =
+const Modifier('HP', const [5, 10, 20]);
+
+const Modifier DamageAdd =
+const Modifier('HP', const [5, 10, 20]);
+
+
+//class Formula {
+//  String name;
+//
+//  num call() {
+//
+//  }
+//
+//}
 
 class ModifierModel {
-  final List<Modifier> modifiers = [];
+  int level = 1;
+  final List<Modifier> _modifiers = [];
 
-  addModifier(String field, String desc, Formula formula) {
-    modifiers.add(new Modifier(new Symbol(field), formula, desc));
+  addModifier(String field, List effect) {
+    _modifiers.add(new Modifier(field, effect));
   }
 
+  modify(target) {
+    _modifiers.forEach((m) {
+      m._setValue(target, level, 1);
+    });
+
+  }
+
+  unmodify(target) {
+    _modifiers.forEach((m) {
+      m._setValue(target, level, -1);
+    });
+  }
 
 //  View createInfoView(){
 //    View view=new View();
@@ -28,20 +67,47 @@ class ModifierModel {
 //  }
 }
 
+//class ModifierSet extends Modifier{
+//
+//}
+
 class Modifier {
-  Symbol field;
-  Formula formula;
-  String desc;
+//  final String name;
+//  final Symbol field;
+  final String fieldName;
 
-  Modifier(this.field, this.formula, this.desc);
+//  final String desc;
+  final List<num> effect;
 
-  modify(target) {
-    reflect(target).setField(field, formula());
+  //final Formula formula;
+
+  const Modifier(String fieldName, this.effect):
+  fieldName=fieldName;
+
+//  field=new Symbol(fieldName);
+
+//  modify(target) {
+//    _setValue(target, formula());
+//  }
+//
+//  unmodify(target) {
+//    _setValue(target, -1 * formula());
+//  }
+
+  void _setValue(target, int level, int inv) {
+    var im = reflect(target);
+    var sym = new Symbol(fieldName);
+    var val = im.getField(sym).reflectee;
+    if (level > effect.length) {
+      level = effect.length;
+    }
+    else if (level <= 0) {
+      level = 1;
+    }
+    im.setField(sym, val + (effect[level - 1] * inv));
   }
 
-  unmodify(target) {
-    reflect(target).setField(field, -1 * formula());
-  }
+  String get name => AttributeName[fieldName];
 }
 
 

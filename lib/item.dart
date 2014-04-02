@@ -229,9 +229,10 @@ Item Dagger() {
   Weapon item = new Weapon();
   item
     ..name = "匕首"
-    ..fomulas[DAMAGE] = () {
-    return 1 + item.level + item.quality;
-  };
+    ..addModifier('damage', [2]);
+//    ..fomulas[DAMAGE] = () {
+//    return 1 + item.level + item.quality;
+//  };
   return item;
 }
 
@@ -239,19 +240,20 @@ Item ShortSword() {
   Weapon item = new Weapon();
   item
     ..name = "短劍"
-    ..fomulas[DAMAGE] = () {
-    return 4 + 2 * item.level * item.quality;
-  };
+    ..addModifier('damage', [4]);
+//    ..fomulas[DAMAGE] = () {
+//    return 4 + 2 * item.level * item.quality;
+//  };
   return item;
 }
 
 Item Sword() {
   Weapon item = new Weapon();
   item
-    ..name = "劍"
-    ..fomulas[DAMAGE] = () {
-    return 12 + 4 * item.level * item.quality;
-  };
+    ..name = "劍";
+//    ..fomulas[DAMAGE] = () {
+//    return 12 + 4 * item.level * item.quality;
+//  };
   return item;
 }
 
@@ -260,18 +262,18 @@ typedef void BuffFunc(Weapon item);
 
 SuperStrong(Weapon item) {
   item
-    ..name = "鋒利的 " + item.name
-    ..fomulas[DAMAGE_Modify] = () {
-    return item.level * item.quality;
-  };
+    ..name = "鋒利的 " + item.name;
+//    ..fomulas[DAMAGE_Modify] = () {
+//    return item.level * item.quality;
+//  };
 }
 
 Potion(Weapon item) {
   item
-    ..name = "劇毒 " + item.name
-    ..fomulas[DAMAGE_Modify] = () {
-    return item.level * item.quality;
-  };
+    ..name = "劇毒 " + item.name;
+//    ..fomulas[DAMAGE_Modify] = () {
+//    return item.level * item.quality;
+//  };
 }
 
 //5000 500 50 5 2 1
@@ -327,9 +329,9 @@ typedef void Effect(Role role);
 typedef num Formula();
 
 
-class Weapon extends Item {
-  final Map<Attribute, Formula> fomulas = {
-  };
+class Weapon extends Item with ModifierModel {
+//  final Map<Attribute, Formula> fomulas = {
+//  };
 
   //  int operator []=(String fomula){
   //    return fomulas[fomula]();
@@ -337,34 +339,36 @@ class Weapon extends Item {
 
   int quality = 1;
 
-  int _level = 1;
-
-  int get level => _level;
+//  int _level = 1;
+//
+//  int get level => _level;
 
   //  Role _role;
 
   setlevel(int value, Role role) {
     //    Role role = _role;
     unequip(role);
-    _level = value;
+    level = value;
     equip(role);
   }
 
 
-  void equip(Role role) {
-    //    _role = role;
-    for (var a in fomulas.keys) {
-      a(role, fomulas[a]());
-    }
-    //onEquip(role);
-  }
+//  void equip(Role role) {
+//    //    _role = role;
+////    for (var a in fomulas.keys) {
+////      a(role, fomulas[a]());
+////    }
+//    //onEquip(role);
+//    modify(role);
+//  }
 
-  void unequip(Role role) {
-    //onEquip(role);
-    for (var a in fomulas.keys) {
-      a(role, -1 * fomulas[a]());
-    }
-  }
+//  void unequip(Role role) {
+//    //onEquip(role);
+////    for (var a in fomulas.keys) {
+////      a(role, -1 * fomulas[a]());
+////    }
+//    unmodify(role);
+//  }
 
 
 //  Effect onEquip = null;
