@@ -20,6 +20,7 @@ class UpgradeView extends View {
       })
         ..onClick.listen((e) {
         if (upgrade.enable) {
+          upgrade.modify(upgrade.role);
           upgrade.level += 1;
           upgrade.role.UP -= upgrade.cost;
         }
@@ -40,7 +41,7 @@ class UpgradeView extends View {
   }
 }
 
-class Upgrade {
+class Upgrade extends ModifierModel {
   String name;
 
   //String desc;
@@ -71,10 +72,12 @@ Map<Creator<Upgrade>, int> upgradeProb = {
 };
 Dict<Upgrade> UpgradeDict = new Dict<Upgrade>(upgradeProb, [up1, up2]);
 
-Upgrade up1(Role role) {
-  Upgrade up = new Upgrade(role);
+Upgrade up1(target) {
+  Upgrade up = new Upgrade(target);
   up
-    ..name = "H1";
+    ..name = "戰鬥訓練"
+
+    ..addModifier('damage', [1, 1, 1, 1, 1, 2, 2, 2, 2, 3]);
   return up;
 }
 
