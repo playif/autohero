@@ -7,54 +7,26 @@
 
 part of game;
 
-class Component extends Model {
-  Model host;
-}
-
-class ActionHost {
-
-
-  //  _addAction(Action action) {
-  //    action.init(this);
-  //    actionPanel.addChild(action);
-  //  }
-  //
-  //  _removeAction(Action action) {
-  //    actionPanel.removeChild(action);
-  //    //owner.removeChild(action);
-  //  }
-}
-
-
-class TimeWatcher {
-
-  num maxTime = 0;
-  num timer = 0;
-  num activeTime = 1000;
-  num activeTimer = 0;
+//class Component extends Model {
+//  Model host;
+//}
+//
+//class ActionHost {
+//
+//
+//  //  _addAction(Action action) {
+//  //    action.init(this);
+//  //    actionPanel.addChild(action);
+//  //  }
+//  //
+//  //  _removeAction(Action action) {
+//  //    actionPanel.removeChild(action);
+//  //    //owner.removeChild(action);
+//  //  }
+//}
 
 
-  void update() {
 
-    timer += DELTA_TIME;
-    activeTimer += DELTA_TIME;
-    if (activeTimer >= activeTime) {
-      activeTimer = 0;
-      active();
-    }
-
-    if (maxTime != 0 && timer >= maxTime) {
-      timeUp();
-    }
-
-  }
-
-  void active() {
-  }
-
-  void timeUp() {
-  }
-}
 
 
 class ActionView extends View {
@@ -83,6 +55,8 @@ class ActionView extends View {
 }
 
 class Action extends Model with TimeWatcher {
+  TimeWatcher _timer = new TimeWatcher();
+
   int level = 1;
   num effect = 1;
   String name = "action";
@@ -97,6 +71,9 @@ class Action extends Model with TimeWatcher {
 
   }
 
+  void update() {
+
+  }
 
   @override
   void active() {

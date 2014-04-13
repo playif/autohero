@@ -23,8 +23,6 @@ void main() {
   //    var l2 = new Button();
 
 
-  start();
-
   createMenuButton("戰場", battlePanel);
   createMenuButton("隊伍", teamPanel);
   createMenuButton("地圖", sitePanel);
@@ -41,4 +39,6 @@ void main() {
   addRole(Mage());
   addRole(Mage());
   addRole(Mage());
+  start();
+  //root.updateView();
 }

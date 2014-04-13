@@ -1,8 +1,8 @@
 //part of model;
 library model;
 
-@MirrorsUsed(targets: const ['model'])
-import 'dart:mirrors';
+//@MirrorsUsed(targets: const ['model'])
+//import 'dart:mirrors';
 
 class Formula {
   String name;
@@ -16,9 +16,9 @@ class Formula {
 class ModifierModel {
   final List<Modifier> modifiers = [];
 
-  addModifier(String field, String desc, Formula formula) {
-    modifiers.add(new Modifier(new Symbol(field), formula, desc));
-  }
+//  addModifier(String field, String desc, Formula formula) {
+//    modifiers.add(new Modifier(new Symbol(field), formula, desc));
+//  }
 
 
 //  View createInfoView(){
@@ -28,22 +28,35 @@ class ModifierModel {
 //  }
 }
 
-class Modifier {
-  Symbol field;
-  Formula formula;
-  String desc;
+abstract class Modifier {
+  //Symbol field;
+  //Formula formula;
+  String get desc;
 
-  Modifier(this.field, this.formula, this.desc);
+  //Modifier();
 
-  modify(target) {
-    reflect(target).setField(field, formula());
+  void modify() {
+    onModify(formula());
+    //reflect(target).setField(field, formula());
   }
 
-  unmodify(target) {
-    reflect(target).setField(field, -1 * formula());
+  void unmodify(target) {
+    onModify(-formula());
+    //reflect(target).setField(field, -1 * formula());
   }
+
+  void onModify(num value);
+
+  num formula();
 }
 
+abstract class Effect {
+  String get desc;
+
+  void effect();
+
+//  void onEffect();
+}
 
 class Model {
   bool _die;

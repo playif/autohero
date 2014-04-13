@@ -322,7 +322,7 @@ Mystery(Weapon item) {
 //Map<String, Item> ItemMap = {
 //  "a": new Item(),
 //};
-typedef void Effect(Role role);
+//typedef void Effect(Role role);
 
 typedef num Formula();
 

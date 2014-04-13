@@ -108,8 +108,8 @@ class View {
   }
 
   void checkFieldBindings([bool force=false]) {
-    children.forEach((View c) => c.checkFieldBindings(force));
     if (!_visible && !force)return;
+    children.forEach((View c) => c.checkFieldBindings(force));
     _fieldBindings.forEach((binding) {
       var cv = reflect(binding.source).getField(binding.sourceField).reflectee;
       if (binding.currentValue != cv) {
@@ -121,7 +121,6 @@ class View {
         binding.currentValue = cv;
       }
     });
-
   }
 
   dynamic observable;
@@ -315,6 +314,7 @@ class View {
   set visible(bool value) {
     if (!_visible && value) {
       updateView(true);
+      updateView(true); //dirty code
       onShow();
     }
     _visible = value;

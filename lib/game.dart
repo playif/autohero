@@ -4,8 +4,9 @@ import 'dart:html';
 import 'dart:async';
 import 'dart:math';
 
-import 'view.dart';
-import 'model.dart';
+import 'model_view/view.dart';
+import 'model_view/model.dart';
+import 'model_view/utility.dart';
 
 part 'panel.dart';
 part 'action.dart';
@@ -19,8 +20,8 @@ part 'site.dart';
 part 'state.dart';
 part 'dict.dart';
 
+part 'modifiers.dart';
 
-const DELTA_TIME = 100;
 
 //game model
 final GameModel game = new GameModel();
@@ -304,7 +305,7 @@ _resetWindowSize() {
 void start([Duration dt = const Duration(milliseconds: DELTA_TIME)]) {
 
   init();
-
+  root.updateView();
   document.body.children.add(root.element);
 
   //  _dt = dt.inMilliseconds;
